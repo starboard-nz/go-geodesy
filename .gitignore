@@ -1,0 +1,9 @@
+junk/*
+*~
+*.env
+run.sh
+*.prof
+profile.pdf
+*.kate-swp
+secret_db.yml
+.idea/
