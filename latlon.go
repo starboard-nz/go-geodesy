@@ -24,7 +24,7 @@ func (d Degrees)Valid() bool {
 	return !math.IsNaN(float64(d))
 }
 
-// ToRadians takes an argument in degrees and returns it in radians
+// Radians takes an argument in degrees and returns it in radians
 func (d Degrees)Radians() float64 {
 	return float64(d) * math.Pi / 180.0
 }
@@ -35,7 +35,7 @@ func (d Degrees)RoundTo(n int) float64 {
 	return math.Round(p10 * float64(d)) / p10
 }
 
-// ToDegrees takes an argument in radians and returns it in degrees
+// DegreesFromRadians takes an argument in radians and returns it in degrees
 func DegreesFromRadians(radians float64) Degrees {
 	return Degrees(radians * 180.0 / math.Pi)
 }

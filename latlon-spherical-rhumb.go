@@ -20,16 +20,19 @@ import (
 	"math"
 )
 
+// LatLonRhumb represents a point used for calculations using a spherical Earth model, along rhumb lines
 type LatLonRhumb struct {
 	ll LatLon
 }
 
+// RhumbModel returns a `Model` that wraps geodesy calculations using spherical Earth model along rhumb lines
 func RhumbModel(ll LatLon) Model {
 	return LatLonRhumb{ll: ll}
 }
 
-func (ll LatLonRhumb)LatLon() LatLon {
-	return ll.ll
+// LatLon converts LatLonRhumb to LatLon
+func (llr LatLonRhumb)LatLon() LatLon {
+	return llr.ll
 }
 
 // NewLatLonRhumb creates a new LatLonRhumb struct

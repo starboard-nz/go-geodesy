@@ -21,15 +21,18 @@ import (
 	"math"
 )
 
+// LatLonSpherical represents a point used for calculations using a spherical Earth model, along great circles
 type LatLonSpherical struct {
 	ll LatLon
 }
 
+// SphericalModel returns a `Model` that wraps geodesy calculations using spherical Earth model along great circles
 func SphericalModel(ll LatLon) Model {
 	return LatLonSpherical{ll: ll}
 }
 
-func (ll LatLonSpherical)LatLon() LatLon {
+// LatLon converts LatLonSpherical to LatLon
+func (lls LatLonSpherical)LatLon() LatLon {
 	return ll.ll
 }
 
