@@ -273,6 +273,7 @@ func TestWrap360(t *testing.T) {
 
 func TestWrap180(t *testing.T) {
 	testValues := map[float64]float64{
+		-8010: -90,
 		-450:  -90,
 		-405:  -45,
 		-360:    0,
@@ -291,6 +292,7 @@ func TestWrap180(t *testing.T) {
 		225: -135,
 		270:  -90,
 		315:  -45,
+		6435: -45,
 		360:    0,
 		405:   45,
 		450:   90,
@@ -304,11 +306,14 @@ func TestWrap180(t *testing.T) {
 
 func TestWrap90(t *testing.T) {
 	testValues := map[float64]float64{
+		-91: -89,
+		4411: 89,
 		-450:  -90,
 		-405:  -45,
 		-360:    0,
 		// -315: 45 TODO: fix!
 		-270:   90,
+		-1350:  90,
 		-225:   45,
 		-180:    0,
 		-135:  -45,

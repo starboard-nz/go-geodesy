@@ -47,6 +47,11 @@ type LatLon struct {
 	Longitude Degrees
 }
 
+// NewLatLon returns a `LatLon` structure with the given latitude and longitude
+func NewLatLon(latitude, longitude float64) LatLon {
+	return LatLon{Latitude: Degrees(latitude), Longitude: Degrees(longitude)}
+}
+
 // Valid returns true if the coordinates are valid. Invalid coordinates are returned by
 // functions when the result cannot be calculated.
 func (ll LatLon)Valid() bool {

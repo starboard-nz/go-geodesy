@@ -18,6 +18,7 @@ package geod
 
 import (
 	"math"
+	"sync"
 )
 
 // LatLonRhumb represents a point used for calculations using a spherical Earth model, along rhumb lines
@@ -26,7 +27,10 @@ type LatLonRhumb struct {
 }
 
 // RhumbModel returns a `Model` that wraps geodesy calculations using spherical Earth model along rhumb lines
-func RhumbModel(ll LatLon) Model {
+func RhumbModel(ll LatLon, modelArgs ...interface{}) Model {
+	if len(modelArgs) != 0 {
+		panic("Invalid number of arguments in call to VincentyModel()")
+	}
 	return LatLonRhumb{ll: ll}
 }
 
@@ -133,7 +137,7 @@ func (llr LatLonRhumb)InitialBearingTo(dest LatLon) Degrees {
         return Wrap360(bearing)
 }
 
-// FinalBearingTo returns the bearing from `lls` to `dest`. In the case of rhumb lines the bearing is constant, so
+// FinalBearingOn returns the bearing from `lls` to `dest`. In the case of rhumb lines the bearing is constant, so
 // this is the same as the initial bearing.
 //
 // Argument:
@@ -145,8 +149,8 @@ func (llr LatLonRhumb)InitialBearingTo(dest LatLon) Degrees {
 // Example:
 // p1 := geod.NewLatLonRhumb(51.127, 1.338)
 // p2 := geod.NewLatLonRhumb(50.964, 1.853)
-// b1 := p1.FinalBearingTo(p2)    // 116.7°
-func (llr LatLonRhumb)FinalBearingTo(dest LatLon) Degrees {
+// b1 := p1.FinalBearingOn(p2)    // 116.7°
+func (llr LatLonRhumb)FinalBearingOn(dest LatLon) Degrees {
 	return llr.InitialBearingTo(dest)
 }
 
@@ -265,3 +269,39 @@ func (llr LatLonRhumb)IntermediatePointTo(dest LatLon, fraction float64) LatLon 
 	bearing := llr.InitialBearingTo(dest)
 	return llr.DestinationPoint(frDist, bearing)
 }
+
+// IntermediatePointsTo returns the points at the given fractions between `llr` and `dest`.
+//
+// Arguments:
+//
+// dest  - destination point
+// fraction - Slice of fractions between the two points (0 = `llr`, 1 = `dest`)
+//
+// Returns an intermediate point for each fraction
+//
+// Example:
+// p1 := geod.NewLatLonRhumb(52.205, 0.119)
+// p2 := geod.LatLon{48.857, 2.351}
+// pInt := p1.IntermediatePointsTo(p2, []float64{0.25, 0.5, 0.75})
+func (llr LatLonRhumb)IntermediatePointsTo(dest LatLon, fractions []float64) []LatLon {
+	waitGroup := &sync.WaitGroup{}
+
+	dist := llr.DistanceTo(dest)
+	bearing := llr.InitialBearingTo(dest)
+
+	points := make([]LatLon, len(fractions))
+	for i, fraction := range(fractions) {
+		waitGroup.Add(1)
+		go func(i int, fraction float64) {
+			frDist := dist.Metres() * fraction
+			points[i] = llr.DestinationPoint(frDist, bearing)
+			waitGroup.Done()
+		} (i, fraction)
+	}
+
+	// wait for all goroutines to finish
+	waitGroup.Wait()
+
+	return points
+}
+

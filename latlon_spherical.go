@@ -19,6 +19,7 @@ package geod
 
 import (
 	"math"
+	"sync"
 )
 
 // LatLonSpherical represents a point used for calculations using a spherical Earth model, along great circles
@@ -27,13 +28,16 @@ type LatLonSpherical struct {
 }
 
 // SphericalModel returns a `Model` that wraps geodesy calculations using spherical Earth model along great circles
-func SphericalModel(ll LatLon) Model {
+func SphericalModel(ll LatLon, modelArgs ...interface{}) Model {
+	if len(modelArgs) != 0 {
+		panic("Invalid number of arguments in call to VincentyModel()")
+	}
 	return LatLonSpherical{ll: ll}
 }
 
 // LatLon converts LatLonSpherical to LatLon
 func (lls LatLonSpherical)LatLon() LatLon {
-	return ll.ll
+	return lls.ll
 }
 
 var earthRadius float64 = 6371000    // metres
@@ -83,7 +87,7 @@ func ParseLatLonSpherical(args ...interface{}) (LatLonSpherical, error) {
 //
 // Examples:
 // p1 := geod.NewLatLonSpherical(52.205, 0.119)
-// p2 := geod.NewLatLonSpherical(48.857, 2.351)
+// p2 := geod.LatLon{48.857, 2.351}
 // d := p1.DistanceTo(p2).Metres()       // 404.3×10³ m
 // m := p1.DistanceTo(p2, 3959).Miles()  // 251.2 miles
 func (lls LatLonSpherical)DistanceTo(dest LatLon) DistanceUnits {
@@ -117,7 +121,7 @@ func (lls LatLonSpherical)DistanceTo(dest LatLon) DistanceUnits {
 //
 // Example:
 // p1 := geod.NewLatLonSpherical(52.205, 0.119)
-// p2 := geod.NewLatLonSpherical(48.857, 2.351)
+// p2 := geod.LatLon{48.857, 2.351}
 // b1 := p1.InitialBearingTo(p2)    // 156.2°
 func (lls LatLonSpherical)InitialBearingTo(dest LatLon) Degrees {
 	if lls.ll.Equals(dest) {
@@ -128,7 +132,7 @@ func (lls LatLonSpherical)InitialBearingTo(dest LatLon) Degrees {
         // see mathforum.org/library/drmath/view/55417.html for derivation
 
         φ1 := lls.ll.Latitude.Radians()
-        φ2 := dest.Latitude.Radians();
+        φ2 := dest.Latitude.Radians()
         Δλ := (dest.Longitude - lls.ll.Longitude).Radians()
 
         x := math.Cos(φ1) * math.Sin(φ2) - math.Sin(φ1) * math.Cos(φ2) * math.Cos(Δλ)
@@ -140,7 +144,7 @@ func (lls LatLonSpherical)InitialBearingTo(dest LatLon) Degrees {
         return Wrap360(bearing)
 }
 
-// FinalBearingTo returns the final bearing arriving at `dest` from `lls`; the final bearing will
+// FinalBearingOn returns the final bearing arriving at `dest` from `lls`; the final bearing will
 // differ from the initial bearing by varying degrees according to distance and latitude.
 //
 // Argument:
@@ -151,9 +155,9 @@ func (lls LatLonSpherical)InitialBearingTo(dest LatLon) Degrees {
 //
 // Example:
 // p1 := geod.NewLatLonSpherical(52.205, 0.119)
-// p2 := geod.NewLatLonSpherical(48.857, 2.351)
-// b1 := p1.InitialBearingTo(p2)    // 157.9°
-func (lls LatLonSpherical)FinalBearingTo(dest LatLon) Degrees {
+// p2 := geod.LatLon{48.857, 2.351}
+// b1 := p1.FinalBearingOn(p2)    // 157.9°
+func (lls LatLonSpherical)FinalBearingOn(dest LatLon) Degrees {
         // get initial bearing from destination point to this point & reverse it by adding 180°
         bearing := LatLonSpherical{ll: dest}.InitialBearingTo(lls.ll) + 180
 
@@ -170,7 +174,7 @@ func (lls LatLonSpherical)FinalBearingTo(dest LatLon) Degrees {
 //
 // Example:
 // p1 := geod.NewLatLonSpherical(52.205, 0.119)
-// p2 := geod.NewLatLonSpherical(48.857, 2.351)
+// p2 := geod.LatLon{48.857, 2.351}
 // pMid := p1.MidPointTo(p2)    // 50.5363°N, 001.2746°E
 func (lls LatLonSpherical)MidPointTo(dest LatLon) LatLon {
         // φm = atan2( sinφ1 + sinφ2, √( (cosφ1 + cosφ2⋅cosΔλ)² + cos²φ2⋅sin²Δλ ) )
@@ -209,8 +213,8 @@ func (lls LatLonSpherical)MidPointTo(dest LatLon) LatLon {
 //
 // Example:
 // p1 := geod.NewLatLonSpherical(52.205, 0.119)
-// p2 := geod.NewLatLonSpherical(48.857, 2.351)
-// pMid := p1.IntermediatePointTo(p2, 0.25)    // 51.3721°N, 000.7073°E
+// p2 := geod.LatLon{48.857, 2.351}
+// pInt := p1.IntermediatePointTo(p2, 0.25)    // 51.3721°N, 000.7073°E
 func (lls LatLonSpherical)IntermediatePointTo(dest LatLon, fraction float64) LatLon {
 	if lls.ll.Equals(dest) {
 		return lls.ll
@@ -242,6 +246,38 @@ func (lls LatLonSpherical)IntermediatePointTo(dest LatLon, fraction float64) Lat
 
         return LatLon{Latitude: lat, Longitude: lon}
 }
+
+// IntermediatePointsTo returns the points at the given fractions between `lls` and `dest`.
+//
+// Arguments:
+//
+// dest  - destination point
+// fraction - Slice of fractions between the two points (0 = `lls`, 1 = `dest`)
+//
+// Returns an intermediate point for each fraction
+//
+// Example:
+// p1 := geod.NewLatLonSpherical(52.205, 0.119)
+// p2 := geod.LatLon{48.857, 2.351}
+// pInt := p1.IntermediatePointsTo(p2, []float64{0.25, 0.5, 0.75})
+func (lls LatLonSpherical)IntermediatePointsTo(dest LatLon, fractions []float64) []LatLon {
+	waitGroup := &sync.WaitGroup{}
+
+	points := make([]LatLon, len(fractions))
+	for i, fraction := range(fractions) {
+		waitGroup.Add(1)
+		go func(i int, fraction float64) {
+			points[i] = lls.IntermediatePointTo(dest, fraction)
+			waitGroup.Done()
+		} (i, fraction)
+	}
+
+	// wait for all goroutines to finish
+	waitGroup.Wait()
+
+	return points
+}
+
 
 // DestinationPoint returns the destination point from `lls` having travelled the given distance on the
 // given initial bearing (bearing normally varies around path followed).
@@ -294,28 +330,28 @@ func (lls LatLonSpherical)DestinationPoint(distance float64, bearing Degrees) La
 // Example:
 // p1 := geod.NewLatLonSpherical(51.8853, 0.2545)
 // brng1 := geod.Degrees(108.547)
-// p2 := geod.NewLatLonSpherical(49.0034, 2.5735)
+// p2 := geod.LatLon{49.0034, 2.5735}
 // brng2 := geod.Degrees(32.435)
 // pInt := p1.Intersection(brng1, p2, brng2) // 50.9078°N, 004.5084°E
-func (lls LatLonSpherical)Intersection(bearing1 Degrees, lls2 LatLon, bearing2 Degrees) LatLon {
-	epsilon := math.Nextafter(1, 2) - 1
+func (lls LatLonSpherical)Intersection(bearing1 Degrees, ll2 LatLon, bearing2 Degrees) LatLon {
+	const π = math.Pi
+	ε := math.Nextafter(1, 2) - 1
 	
         // see www.edwilliams.org/avform.htm#Intersection
 
         φ1 := lls.ll.Latitude.Radians()
 	λ1 := lls.ll.Longitude.Radians()
-        φ2 := lls2.Latitude.Radians()
-	λ2 := lls2.Longitude.Radians()
+        φ2 := ll2.Latitude.Radians()
+	λ2 := ll2.Longitude.Radians()
         θ13 := bearing1.Radians()
 	θ23 := bearing2.Radians()
         Δφ := φ2 - φ1
 	Δλ := λ2 - λ1
-	const π = math.Pi
 
         // angular distance p1-p2
         δ12 := 2 * math.Asin(math.Sqrt(math.Sin(Δφ/2) * math.Sin(Δφ/2) +
 		math.Cos(φ1) * math.Cos(φ2) * math.Sin(Δλ/2) * math.Sin(Δλ/2)))
-        if math.Abs(δ12) < epsilon {
+        if math.Abs(δ12) < ε {
 		return lls.ll  // coincident points
 	}
 

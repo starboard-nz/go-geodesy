@@ -210,7 +210,10 @@ func Wrap180(degrees Degrees) Degrees {
 		// avoid rounding due to arithmetic ops if within range
 		return degrees
 	}
-        return Degrees(math.Mod(float64(degrees) + 540.0, 360.0) - 180.0)          // sawtooth wave p:180, a:±180
+        return Degrees(
+		math.Mod(
+			float64(degrees) + 180.0 + 360 * (math.Floor(math.Abs(float64(degrees)/360.0)) + 1),
+			360.0) - 180.0)          // sawtooth wave p:180, a:±180
 }
 
 // Wrap90 constrains `degrees` to range -90..+90 (e.g. for latitude); -91 --> -89, 91 --> 89.

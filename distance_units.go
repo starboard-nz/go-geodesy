@@ -8,11 +8,21 @@ package geod
  * See LICENSE in the root directory of this source tree.
  */
 
+import (
+	"math"
+)
+
 // DistanceUnits represents a distance between 2 points.
 // Use Metres() or Kilometres() to get the distance in the unit of your choice.
 // If you prefer imperial units, use NauticalMiles() Miles() or Feet().
 // Or if you're in the US but like SI standards, you may want to use Meters() or Kilometers()  :)
 type DistanceUnits float64
+
+// Valid returns true if the distance is valid. Invalid distances are returned by
+// functions when the result cannot be calculated.
+func (d DistanceUnits)Valid() bool {
+	return !math.IsNaN(float64(d))
+}
 
 // Metres returns the DistanceUnits d in metres
 func (d DistanceUnits)Metres() float64 {
