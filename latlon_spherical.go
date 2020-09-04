@@ -55,11 +55,11 @@ func SetEarthRadius(r float64) {
 }
 
 // NewLatLonSpherical creates a new LatLonSpherical struct
-func NewLatLonSpherical(latitude, longitude Degrees) LatLonSpherical {
+func NewLatLonSpherical(latitude, longitude float64) LatLonSpherical {
 	return LatLonSpherical{
 		ll: LatLon{
-			Latitude: Wrap90(latitude),
-			Longitude: Wrap180(longitude),
+			Latitude: Wrap90(Degrees(latitude)),
+			Longitude: Wrap180(Degrees(longitude)),
 		},
 	}
 }
@@ -199,7 +199,7 @@ func (lls LatLonSpherical)MidPointTo(dest LatLon) LatLon {
         lat := DegreesFromRadians(φm)
         lon := DegreesFromRadians(λm)
 
-        return LatLon{Latitude: lat, Longitude: lon}
+        return LatLon{Latitude: Wrap90(lat), Longitude: Wrap180(lon)}
 }
 
 // IntermediatePointTo returns the point at the given fraction between `lls` and `dest`.
@@ -244,7 +244,7 @@ func (lls LatLonSpherical)IntermediatePointTo(dest LatLon, fraction float64) Lat
         lat := DegreesFromRadians(φ3)
         lon := DegreesFromRadians(λ3)
 
-        return LatLon{Latitude: lat, Longitude: lon}
+        return LatLon{Latitude: Wrap90(lat), Longitude: Wrap180(lon)}
 }
 
 // IntermediatePointsTo returns the points at the given fractions between `lls` and `dest`.
@@ -312,7 +312,7 @@ func (lls LatLonSpherical)DestinationPoint(distance float64, bearing Degrees) La
         lat := DegreesFromRadians(φ2)
         lon := DegreesFromRadians(λ2)
 
-        return LatLon{Latitude: lat, Longitude: lon}
+        return LatLon{Latitude: Wrap90(lat), Longitude: Wrap180(lon)}
 }
 
 // Intersection returns the point of intersection of two paths defined by point and bearing.
@@ -392,6 +392,6 @@ func (lls LatLonSpherical)Intersection(bearing1 Degrees, ll2 LatLon, bearing2 De
         lat := DegreesFromRadians(φ3)
         lon := DegreesFromRadians(λ3)
 
-        return LatLon{Latitude: lat, Longitude: lon}
-    }
+        return LatLon{Latitude: Wrap90(lat), Longitude: Wrap180(lon)}
+}
 

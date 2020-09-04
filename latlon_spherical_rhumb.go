@@ -201,7 +201,7 @@ func (llr LatLonRhumb)DestinationPoint(distance float64, bearing Degrees) LatLon
         lat := DegreesFromRadians(φ2)
         lon := DegreesFromRadians(λ2)
 
-        return LatLon{Latitude: lat, Longitude: lon}
+        return LatLon{Latitude: Wrap90(lat), Longitude: Wrap180(lon)}
 }
 
 
@@ -243,7 +243,7 @@ func (llr LatLonRhumb)MidPointTo(dest LatLon) LatLon {
         lat := DegreesFromRadians(φ3)
         lon := DegreesFromRadians(λ3)
 
-        return LatLon{Latitude: lat, Longitude: lon}
+        return LatLon{Latitude: Wrap90(lat), Longitude: Wrap180(lon)}
 }
 
 // IntermediatePointTo returns the point at the given fraction between `lls` and `dest` along a rhumb line
@@ -304,4 +304,3 @@ func (llr LatLonRhumb)IntermediatePointsTo(dest LatLon, fractions []float64) []L
 
 	return points
 }
-

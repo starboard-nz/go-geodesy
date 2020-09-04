@@ -17,6 +17,20 @@ func timeTrack(start time.Time, name string) {
 	fmt.Printf("%s took %s\n", name, elapsed)
 }
 
+func vincentyDistAlongRhumb(start, end LatLon) DistanceUnits {
+	n := 100
+	fractions := make([]float64, 0, n)
+	for i := 0 ; i <= n; i++ {
+		fractions = append(fractions, float64(i) / float64(n))
+	}
+	intPts := IntermediatePoints(start, end, fractions, RhumbModel)
+	dist := 0.0
+	for i := 0 ; i < n; i++ {
+		dist += Distance(intPts[i], intPts[i+1], VincentyModel).Metres()
+	}
+	return DistanceUnits(dist)
+}
+
 func TestModelAklSan(t *testing.T) {
 	p1 := LatLon{-36.8368, 174.765}   // Auckland
 	p2 := LatLon{32.6616, -117.2241}   // San Diego
@@ -30,9 +44,10 @@ func TestModelAklSan(t *testing.T) {
 	ds := Distance(p1, p2, SphericalModel).Kilometres()
 	dr := Distance(p1, p2, RhumbModel).Kilometres()
 	dv := Distance(p1, p2, VincentyModel).Kilometres()
-	fmt.Printf("  Distance: (spherical) %vkm\n", ds)
-	fmt.Printf("  Distance: (rhumb) %vkm\n", dr)
 	fmt.Printf("  Distance: (Vincenty) %vkm\n", dv)
+	fmt.Printf("  Distance: (rhumb) %vkm\n", dr)
+	fmt.Printf("  Distance: (Vincenty along rhumb line) %vkm\n", vincentyDistAlongRhumb(p1, p2).Kilometres())
+	fmt.Printf("  Distance: (spherical) %vkm\n", ds)
 	fmt.Printf("  Midpoint distances: spherical to Vincenty: %vm\n", Distance(mps, mpv, VincentyModel).Metres())
 	fmt.Printf("  Midpoint distances: spherical to rhumb: %vm\n", Distance(mps, mpr, VincentyModel).Metres())
 	fmt.Printf("  Midpoint distances: rhumb to Vincenty: %vm\n", Distance(mpr, mpv, VincentyModel).Metres())
@@ -51,9 +66,10 @@ func TestModelWszSyd(t *testing.T) {
 	ds := Distance(p1, p2, SphericalModel).Kilometres()
 	dr := Distance(p1, p2, RhumbModel).Kilometres()
 	dv := Distance(p1, p2, VincentyModel).Kilometres()
-	fmt.Printf("  Distance: (spherical) %vkm\n", ds)
-	fmt.Printf("  Distance: (rhumb) %vkm\n", dr)
 	fmt.Printf("  Distance: (Vincenty) %vkm\n", dv)
+	fmt.Printf("  Distance: (rhumb) %vkm\n", dr)
+	fmt.Printf("  Distance: (Vincenty along rhumb line) %vkm\n", vincentyDistAlongRhumb(p1, p2).Kilometres())
+	fmt.Printf("  Distance: (spherical) %vkm\n", ds)
 	fmt.Printf("  Midpoint distances: spherical to Vincenty: %vm\n", Distance(mps, mpv, VincentyModel).Metres())
 	fmt.Printf("  Midpoint distances: spherical to rhumb: %vm\n", Distance(mps, mpr, VincentyModel).Metres())
 	fmt.Printf("  Midpoint distances: rhumb to Vincenty: %vm\n", Distance(mpr, mpv, VincentyModel).Metres())
@@ -105,9 +121,9 @@ func TestMidPointVincenty(t *testing.T) {
 
 func TestIntermediatePointsSpherical(t *testing.T) {
 	p := getTestPositions()
-	fractions := make([]float64, 100)
+	fractions := make([]float64, 0, 100)
 	for i := 0 ; i < 100; i++ {
-		fractions = append(fractions, float64(i) / 1000.0)
+		fractions = append(fractions, float64(i) / 100.0)
 	}
 	defer timeTrack(time.Now(), "100000 x 100 spherical intermediate points calculations")
 
@@ -120,7 +136,7 @@ func TestIntermediatePointsSpherical(t *testing.T) {
 
 func TestIntermediatePointsVincenty(t *testing.T) {
 	p := getTestPositions()
-	fractions := make([]float64, 100)
+	fractions := make([]float64, 0, 100)
 	for i := 0 ; i < 100; i++ {
 		fractions = append(fractions, float64(i) / 1000.0)
 	}

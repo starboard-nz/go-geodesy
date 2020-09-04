@@ -54,11 +54,11 @@ func (llv LatLonEllipsoidalVincenty)LatLon() LatLon {
 }
 
 // NewLatLonEllipsodialVincenty creates a new LatLonEllipsoidalVincenty struct
-func NewLatLonEllipsodialVincenty(latitude, longitude Degrees, ellipsoid Ellipsoid) LatLonEllipsoidalVincenty {
+func NewLatLonEllipsodialVincenty(latitude, longitude float64, ellipsoid Ellipsoid) LatLonEllipsoidalVincenty {
 	return LatLonEllipsoidalVincenty{
 		ll: LatLon{
-			Latitude: Wrap90(latitude),
-			Longitude: Wrap180(longitude),
+			Latitude: Wrap90(Degrees(latitude)),
+			Longitude: Wrap180(Degrees(longitude)),
 		},
 		ellipsoid: ellipsoid,
 	}
@@ -132,7 +132,7 @@ func (llv LatLonEllipsoidalVincenty)VincentyDirect(distance float64, initialBear
 
         α2 := math.Atan2(sinα, -x)
 
-        destinationPoint := LatLon{Latitude: DegreesFromRadians(φ2), Longitude: DegreesFromRadians(λ2)}
+        destinationPoint := LatLon{Latitude: Wrap90(DegreesFromRadians(φ2)), Longitude: Wrap180(DegreesFromRadians(λ2))}
 	finalBearing := Wrap360(DegreesFromRadians(α2))
 
         return destinationPoint, finalBearing
