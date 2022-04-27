@@ -1,3 +1,3 @@
-module gitlab.com/xerra/common/go-geodesy
+module github.com/starboard-nz/go-geodesy
 
-go 1.15
+go 1.17
