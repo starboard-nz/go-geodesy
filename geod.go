@@ -24,6 +24,8 @@ type Model interface {
 	LatLon() LatLon
 }
 
+type EarthModel func(LatLon, ...interface{}) Model
+
 // MidPoint returns the point halfway between `start` and `end` using the given `model`.
 //
 // Arguments:
@@ -43,7 +45,7 @@ type Model interface {
 // p1 := geod.NewLatLon(10.1, -20.0)
 // p2 := geod.NewLatLon(12.1, -23.2)
 // mid := geod.MidPoint(p1, p2, geod.SphericalModel)
-func MidPoint(start, end LatLon, model func(LatLon, ...interface{}) Model, modelArgs ...interface{}) LatLon {
+func MidPoint(start, end LatLon, model EarthModel, modelArgs ...interface{}) LatLon {
 	p1 := model(start, modelArgs...)
 	return p1.MidPointTo(end)
 }
@@ -69,7 +71,7 @@ func MidPoint(start, end LatLon, model func(LatLon, ...interface{}) Model, model
 // dist := geod.MidPoint(p1, p2, geod.VincentyModel, WGS84)    // WGS84 can be omitted, it's the default and only
 //                                                                `Ellipsoid` currently defined
 // metres := dist.Metres()
-func Distance(start, end LatLon, model func(LatLon, ...interface{}) Model, modelArgs ...interface{}) DistanceUnits {
+func Distance(start, end LatLon, model EarthModel, modelArgs ...interface{}) DistanceUnits {
 	p1 := model(start, modelArgs...)
 	return p1.DistanceTo(end)
 }
@@ -93,7 +95,7 @@ func Distance(start, end LatLon, model func(LatLon, ...interface{}) Model, model
 // p1 := geod.NewLatLon(10.1, -20.0)
 // p2 := geod.NewLatLon(12.1, -23.2)
 // bearing := geod.InitialBearing(p1, p2, geod.SphericalModel)
-func InitialBearing(start, end LatLon, model func(LatLon, ...interface{}) Model, modelArgs ...interface{}) Degrees {
+func InitialBearing(start, end LatLon, model EarthModel, modelArgs ...interface{}) Degrees {
 	p1 := model(start, modelArgs...)
 	return p1.InitialBearingTo(end)
 }
@@ -117,7 +119,7 @@ func InitialBearing(start, end LatLon, model func(LatLon, ...interface{}) Model,
 // p1 := geod.NewLatLon(10.1, -20.0)
 // p2 := geod.NewLatLon(12.1, -23.2)
 // bearing := geod.FinalBearing(p1, p2, geod.SphericalModel)
-func FinalBearing(start, end LatLon, model func(LatLon, ...interface{}) Model, modelArgs ...interface{}) Degrees {
+func FinalBearing(start, end LatLon, model EarthModel, modelArgs ...interface{}) Degrees {
 	p1 := model(start, modelArgs...)
 	return p1.FinalBearingOn(end)
 }
@@ -143,7 +145,7 @@ func FinalBearing(start, end LatLon, model func(LatLon, ...interface{}) Model, m
 // p1 := geod.NewLatLon(10.1, -20.0)
 // bearing := geod.Degrees(23.2)
 // p2 := geod.Destination(p1, 100000.0, bearing, geod.RhumbModel) // 100kms from p1 heading 23.2 along a rhumb line
-func DestinationPoint(start LatLon, distance float64, bearing Degrees, model func(LatLon, ...interface{}) Model,
+func DestinationPoint(start LatLon, distance float64, bearing Degrees, model EarthModel,
 	modelArgs ...interface{}) LatLon {
 
 	p1 := model(start, modelArgs...)
@@ -170,7 +172,7 @@ func DestinationPoint(start LatLon, distance float64, bearing Degrees, model fun
 // p1 := geod.NewLatLon(10.1, -20.0)
 // p2 := geod.NewLatLon(12.1, -23.2)
 // pInt := geod.IntermediatePoint(p1, p2, 0.24, geod.VincentyModel)
-func IntermediatePoint(start, end LatLon, fraction float64, model func(LatLon, ...interface{}) Model,
+func IntermediatePoint(start, end LatLon, fraction float64, model EarthModel,
 	modelArgs ...interface{}) LatLon {
 
 	p1 := model(start, modelArgs...)
@@ -199,7 +201,7 @@ func IntermediatePoint(start, end LatLon, fraction float64, model func(LatLon, .
 // p1 := geod.NewLatLon(10.1, -20.0)
 // p2 := geod.NewLatLon(12.1, -23.2)
 // pInt := geod.IntermediatePoint(p1, p2, 0.24, geod.VincentyModel)
-func IntermediatePoints(start, end LatLon, fractions []float64, model func(LatLon, ...interface{}) Model,
+func IntermediatePoints(start, end LatLon, fractions []float64, model EarthModel,
 	modelArgs ...interface{}) []LatLon {
 
 	p1 := model(start, modelArgs...)
