@@ -34,3 +34,14 @@ func BenchmarkRayIntersect(b *testing.B) {
 		rayIntersect(p[n%N], s[n%N], e[n%N], geod.RhumbModel)
 	}
 }
+
+
+func TestRayInterSect(t *testing.T) {
+	s := geod.LatLon{Latitude: 0, Longitude: 0}
+	e := geod.LatLon{Latitude: -50, Longitude: 60}
+	p := geod.LatLon{Latitude: -10, Longitude: 55}
+	bse := geod.InitialBearing(s, e, geod.SphericalModel)
+	bsp := geod.InitialBearing(s, p, geod.SphericalModel)
+	t.Logf("s -> e initial bearing: %v", bse)
+	t.Logf("s -> p initial bearing: %v", bsp)
+}
