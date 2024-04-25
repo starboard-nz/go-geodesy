@@ -2,6 +2,10 @@ package geod
 
 // Pure Go re-implementation of https://github.com/chrisveness/geodesy
 
+import (
+	"github.com/starboard-nz/units"
+)
+
 /**
  * Copyright (c) 2020, Xerra Earth Observation Institute
  * All rights reserved. Use is subject to License terms.
@@ -83,14 +87,14 @@ func ParseLatLonSpherical(args ...interface{}) (LatLonSpherical, error) {
 //
 // dest  - destination point
 //
-// Returns the `Distance` between this point and destination point in DistanceUnits
+// Returns the `Distance` between this point and destination point in Distance units.
 //
 // Examples:
 // p1 := geod.NewLatLonSpherical(52.205, 0.119)
 // p2 := geod.LatLon{48.857, 2.351}
 // d := p1.DistanceTo(p2).Metres()       // 404.3×10³ m
 // m := p1.DistanceTo(p2, 3959).Miles()  // 251.2 miles
-func (lls LatLonSpherical)DistanceTo(dest LatLon) DistanceUnits {
+func (lls LatLonSpherical)DistanceTo(dest LatLon) units.Distance {
         // a = sin²(Δφ/2) + cos(φ1)⋅cos(φ2)⋅sin²(Δλ/2)
         // δ = 2·atan2(√(a), √(1−a))
         // see mathforum.org/library/drmath/view/51879.html for derivation
@@ -107,7 +111,7 @@ func (lls LatLonSpherical)DistanceTo(dest LatLon) DistanceUnits {
         c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
         d := R * c
 
-        return DistanceUnits(d)
+        return units.Distance(d) * units.Metre
 }
 
 

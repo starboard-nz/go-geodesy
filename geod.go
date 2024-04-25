@@ -3,10 +3,14 @@ package geod
 // Pure Go re-implementation of https://github.com/chrisveness/geodesy
 
 /**
- * Copyright (c) 2020, Xerra Earth Observation Institute
+ * Copyright (c) 2020, 2024, Xerra Earth Observation Institute
  * All rights reserved. Use is subject to License terms.
  * See LICENSE in the root directory of this source tree.
  */
+
+import (
+	"github.com/starboard-nz/units"
+)
 
 // Model defines the Earth model used for calculations.
 // The following models are implemented:
@@ -14,7 +18,7 @@ package geod
 //    geod.RhumbModel      - spherical Earth, along rhumb lines
 //    geod.VincentyModel   - ellipsoid Earth, high accuracy, slower than SphericalModel
 type Model interface {
-	DistanceTo(ll LatLon) DistanceUnits
+	DistanceTo(ll LatLon) units.Distance
 	InitialBearingTo(ll LatLon) Degrees
 	FinalBearingOn(ll LatLon) Degrees
 	DestinationPoint(distance float64, bearing Degrees) LatLon
@@ -71,7 +75,7 @@ func MidPoint(start, end LatLon, model EarthModel, modelArgs ...interface{}) Lat
 // dist := geod.MidPoint(p1, p2, geod.VincentyModel, WGS84)    // WGS84 can be omitted, it's the default and only
 //                                                                `Ellipsoid` currently defined
 // metres := dist.Metres()
-func Distance(start, end LatLon, model EarthModel, modelArgs ...interface{}) DistanceUnits {
+func Distance(start, end LatLon, model EarthModel, modelArgs ...interface{}) units.Distance {
 	p1 := model(start, modelArgs...)
 	return p1.DistanceTo(end)
 }

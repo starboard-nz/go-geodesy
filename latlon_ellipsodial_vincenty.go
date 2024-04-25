@@ -2,6 +2,10 @@ package geod
 
 // Pure Go re-implementation of https://github.com/chrisveness/geodesy
 
+import (
+	"github.com/starboard-nz/units"
+)
+
 /**
  * Copyright (c) 2020, Xerra Earth Observation Institute
  * All rights reserved. Use is subject to License terms.
@@ -146,9 +150,9 @@ func (llv LatLonEllipsoidalVincenty)VincentyDirect(distance float64, initialBear
 // dest - destination point
 //
 // Returns (distance from `llv` to `dest`, initial bearing in degrees from North, final bearing in degrees from North)
-func (llv LatLonEllipsoidalVincenty)VincentyInverse(dest LatLon) (DistanceUnits, Degrees, Degrees) {
+func (llv LatLonEllipsoidalVincenty)VincentyInverse(dest LatLon) (units.Distance, Degrees, Degrees) {
 	if llv.ll.Equals(dest) {
-		return DistanceUnits(0.0), Degrees(math.NaN()), Degrees(math.NaN())
+		return 0, Degrees(math.NaN()), Degrees(math.NaN())
 	}
 
 	const π = math.Pi
@@ -217,7 +221,7 @@ func (llv LatLonEllipsoidalVincenty)VincentyInverse(dest LatLon) (DistanceUnits,
 			iterationCheck = math.Abs(λ)
 		}
 		if (iterationCheck > π) {
-			return DistanceUnits(math.NaN()), Degrees(math.NaN()), Degrees(math.NaN())
+			return units.Distance(math.NaN()), Degrees(math.NaN()), Degrees(math.NaN())
 		}
 		iterations++
 		if math.Abs(λ - λʹ) <= 1e-12 || iterations >= 1000 {
@@ -226,7 +230,7 @@ func (llv LatLonEllipsoidalVincenty)VincentyInverse(dest LatLon) (DistanceUnits,
         }
 
         if iterations >= 1000 {
-		return DistanceUnits(math.NaN()), Degrees(math.NaN()), Degrees(math.NaN())
+		return units.Distance(math.NaN()), Degrees(math.NaN()), Degrees(math.NaN())
 	}
 
         uSq := cosSqα * (a * a - b * b) / (b * b)
@@ -257,7 +261,7 @@ func (llv LatLonEllipsoidalVincenty)VincentyInverse(dest LatLon) (DistanceUnits,
 	if math.Abs(s) >= ε {
 		finalBearing = Wrap360(DegreesFromRadians(α2))
 	}
-        return DistanceUnits(s), initialBearing, finalBearing
+        return units.Distance(s) * units.Metre, initialBearing, finalBearing
 }
 
 // DistanceTo returns the distance along the surface of the earth from `llv` to `dest` using Vincenty Inverse calculation
@@ -273,7 +277,7 @@ func (llv LatLonEllipsoidalVincenty)VincentyInverse(dest LatLon) (DistanceUnits,
 // p2 := geod.LatLon{48.857, 2.351}
 // d := p1.DistanceTo(p2).Metres()       // 404.3×10³ m
 // m := p1.DistanceTo(p2, 3959).Miles()  // 251.2 miles
-func (llv LatLonEllipsoidalVincenty)DistanceTo(dest LatLon) DistanceUnits {
+func (llv LatLonEllipsoidalVincenty)DistanceTo(dest LatLon) units.Distance {
 	dist, _, _ := llv.VincentyInverse(dest)
 	return dist
 }

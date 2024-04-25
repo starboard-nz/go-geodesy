@@ -9,7 +9,21 @@ package geod
 import (
 	"testing"
 	"math"
+	"fmt"
+	"time"
 )
+
+func TestTest(t *testing.T) {
+        p1 := NewLatLonRhumb(29.56600166666667, -93.65966499999999)
+        p2 := NewLatLon(-45.83760666666667, -94.61307166666667)
+	dist := p1.DistanceTo(p2)
+        fmt.Printf("dist = %fkm\n", dist.Kilometres())
+        fmt.Printf("dist = %fnm\n", dist.NauticalMiles())
+
+        dt := time.Duration(1680719495-1680404293)*time.Second
+        fmt.Printf("duration: %v\n", dt)
+        fmt.Printf("Speed: %f\n", dist.NauticalMiles()/((1680719495-1680404293)/3600))
+}
 
 func TestRhumb(t *testing.T) {
 	p1 := NewLatLonRhumb(51.127, 1.338)

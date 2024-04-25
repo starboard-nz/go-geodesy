@@ -19,6 +19,8 @@ package geod
 import (
 	"math"
 	"sync"
+
+	"github.com/starboard-nz/units"
 )
 
 // LatLonRhumb represents a point used for calculations using a spherical Earth model, along rhumb lines
@@ -55,13 +57,13 @@ func NewLatLonRhumb(latitude, longitude Degrees) LatLonRhumb {
 //
 // dest  - destination point
 //
-// Returns the `Distance` between this point and destination point in DistanceUnits
+// Returns the `Distance` between this point and destination point in Distance units.
 //
 // Examples:
 // p1 := geod.NewLatLonRhumb(51.127, 1.338)
 // p2 := geod.NewLatLonRhumb(50.964, 1.853)
 // d := p1.DistanceTo(p2).Kilometres()  //  40.31 km
-func (llr LatLonRhumb)DistanceTo(dest LatLon) DistanceUnits {
+func (llr LatLonRhumb)DistanceTo(dest LatLon) units.Distance {
         // see www.edwilliams.org/avform.htm#Rhumb
 
 	const π = math.Pi
@@ -93,7 +95,7 @@ func (llr LatLonRhumb)DistanceTo(dest LatLon) DistanceUnits {
         δ := math.Sqrt(Δφ*Δφ + q*q * Δλ*Δλ)  // angular distance in radians
         d := δ * R
 
-        return DistanceUnits(d)
+        return units.Distance(d) * units.Metre
 }
 
 // InitialBearingTo returns the bearing from `lls` to `dest`. In the case of rhumb lines the bearing is constant, so
