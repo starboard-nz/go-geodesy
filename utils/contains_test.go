@@ -75,7 +75,7 @@ func TestRingContains(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			ring.Reverse()
-			val := utils.RingContains(ring, tc.point, geod.RhumbModel)
+			val := utils.RingContains(ring, tc.point, false, geod.RhumbModel)
 
 			if val != tc.result {
 				t.Errorf("wrong containment: %v != %v", val, tc.result)
@@ -83,7 +83,7 @@ func TestRingContains(t *testing.T) {
 
 			// should not care about orientation
 			ring.Reverse()
-			val = utils.RingContains(ring, tc.point, geod.RhumbModel)
+			val = utils.RingContains(ring, tc.point, false, geod.RhumbModel)
 			if val != tc.result {
 				t.Errorf("wrong containment: %v != %v", val, tc.result)
 			}
@@ -92,7 +92,7 @@ func TestRingContains(t *testing.T) {
 
 	// points should all be in
 	for i, p := range ring {
-		if !utils.RingContains(ring, p, geod.RhumbModel) {
+		if !utils.RingContains(ring, p, false, geod.RhumbModel) {
 			t.Errorf("point index %d: should be inside", i)
 		}
 	}
@@ -100,7 +100,7 @@ func TestRingContains(t *testing.T) {
 	// on all the segments should be in.
 	for i := 1; i < len(ring); i++ {
 		c := interpolate(ring[i], ring[i-1], 0.5)
-		if !utils.RingContains(ring, c, geod.RhumbModel) {
+		if !utils.RingContains(ring, c, false, geod.RhumbModel) {
 			t.Errorf("index %d centroid: should be inside", i)
 		}
 	}
@@ -108,12 +108,12 @@ func TestRingContains(t *testing.T) {
 	// colinear with segments but outside
 	for i := 1; i < len(ring); i++ {
 		p := interpolate(ring[i], ring[i-1], 5)
-		if utils.RingContains(ring, p, geod.RhumbModel) {
+		if utils.RingContains(ring, p, false, geod.RhumbModel) {
 			t.Errorf("index %d centroid: should not be inside", i)
 		}
 
 		p = interpolate(ring[i], ring[i-1], -5)
-		if utils.RingContains(ring, p, geod.RhumbModel) {
+		if utils.RingContains(ring, p, false, geod.RhumbModel) {
 			t.Errorf("index %d centroid: should not be inside", i)
 		}
 	}
@@ -138,6 +138,16 @@ func TestPolygonContains(t *testing.T) {
 	p[1].Reverse() // oriented correctly as opposite of outer
 	if utils.PolygonContains(p, orb.Point{1.5, 1.5}, geod.RhumbModel) {
 		t.Errorf("should not contain point in hole")
+	}
+
+	// point is a vertex of the hole
+	if !utils.PolygonContains(p, orb.Point{2, 2}, geod.RhumbModel) {
+		t.Errorf("should contain point which touches vertex of hole")
+	}
+
+	// point touches edge of the hole
+	if !utils.PolygonContains(p, orb.Point{2, 1.5}, geod.RhumbModel) {
+		t.Errorf("should contain point which touches edge of hole")
 	}
 }
 
@@ -164,6 +174,22 @@ func TestMultiPolygonContains(t *testing.T) {
 	if utils.MultiPolygonContains(mp, orb.Point{1.5, 0.5}, geod.RhumbModel) {
 		t.Errorf("should not contain point")
 	}
+
+	// Meridian tests
+	mp = append(mp, orb.Polygon{{{-10, -10}, {10, -10}, {10, 10}, {-10, 10}, {-10, -10}}})
+
+	if !utils.MultiPolygonContains(mp, orb.Point{10, 10}, geod.RhumbModel) {
+		t.Errorf("should contain point")
+	}
+
+	if utils.MultiPolygonContains(mp, orb.Point{10.00000000001, 10}, geod.RhumbModel) {
+		t.Errorf("should not contain point")
+	}
+
+	if !utils.MultiPolygonContains(mp, orb.Point{-9.99999999999999, 10}, geod.RhumbModel) {
+		t.Errorf("should contain point")
+	}
+
 }
 
 func interpolate(a, b orb.Point, percent float64) orb.Point {
