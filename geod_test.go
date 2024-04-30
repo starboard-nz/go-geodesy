@@ -21,11 +21,11 @@ func vincentyDistAlongRhumb(start, end geod.LatLon) units.Distance {
 		fractions = append(fractions, float64(i)/float64(n))
 	}
 	intPts := geod.IntermediatePoints(start, end, fractions, geod.RhumbModel)
-	dist := units.Distance(0)
+	var metres float64
 	for i := 0; i < n; i++ {
-		dist += geod.Distance(intPts[i], intPts[i+1], geod.VincentyModel)
+		metres += float64(geod.Distance(intPts[i], intPts[i+1], geod.VincentyModel).Metre())
 	}
-	return dist
+	return units.Metre(metres)
 }
 
 func TestModelAklSan(t *testing.T) {
@@ -38,16 +38,16 @@ func TestModelAklSan(t *testing.T) {
 	fmt.Printf("  Midpoint: (spherical) %v\n", mps)
 	fmt.Printf("  Midpoint: (rhumb) %v\n", mpr)
 	fmt.Printf("  Midpoint: (Vincenty) %v\n", mpv)
-	ds := geod.Distance(p1, p2, geod.SphericalModel).Kilometres()
-	dr := geod.Distance(p1, p2, geod.RhumbModel).Kilometres()
-	dv := geod.Distance(p1, p2, geod.VincentyModel).Kilometres()
-	fmt.Printf("  Distance: (Vincenty) %vkm\n", dv)
-	fmt.Printf("  Distance: (rhumb) %vkm\n", dr)
-	fmt.Printf("  Distance: (Vincenty along rhumb line) %vkm\n", vincentyDistAlongRhumb(p1, p2).Kilometres())
-	fmt.Printf("  Distance: (spherical) %vkm\n", ds)
-	fmt.Printf("  Midpoint distances: spherical to Vincenty: %vm\n", geod.Distance(mps, mpv, geod.VincentyModel).Metres())
-	fmt.Printf("  Midpoint distances: spherical to rhumb: %vm\n", geod.Distance(mps, mpr, geod.VincentyModel).Metres())
-	fmt.Printf("  Midpoint distances: rhumb to Vincenty: %vm\n", geod.Distance(mpr, mpv, geod.VincentyModel).Metres())
+	ds := geod.Distance(p1, p2, geod.SphericalModel).Km()
+	dr := geod.Distance(p1, p2, geod.RhumbModel).Km()
+	dv := geod.Distance(p1, p2, geod.VincentyModel).Km()
+	fmt.Printf("  Distance: (Vincenty) %v\n", dv)
+	fmt.Printf("  Distance: (rhumb) %v\n", dr)
+	fmt.Printf("  Distance: (Vincenty along rhumb line) %v\n", vincentyDistAlongRhumb(p1, p2).Km())
+	fmt.Printf("  Distance: (spherical) %v\n", ds)
+	fmt.Printf("  Midpoint distances: spherical to Vincenty: %v\n", geod.Distance(mps, mpv, geod.VincentyModel).Metre())
+	fmt.Printf("  Midpoint distances: spherical to rhumb: %v\n", geod.Distance(mps, mpr, geod.VincentyModel).Metre())
+	fmt.Printf("  Midpoint distances: rhumb to Vincenty: %v\n", geod.Distance(mpr, mpv, geod.VincentyModel).Metre())
 }
 
 func TestModelWszSyd(t *testing.T) {
@@ -60,16 +60,16 @@ func TestModelWszSyd(t *testing.T) {
 	fmt.Printf("  Midpoint: (spherical) %v\n", mps)
 	fmt.Printf("  Midpoint: (rhumb) %v\n", mpr)
 	fmt.Printf("  Midpoint: (Vincenty) %v\n", mpv)
-	ds := geod.Distance(p1, p2, geod.SphericalModel).Kilometres()
-	dr := geod.Distance(p1, p2, geod.RhumbModel).Kilometres()
-	dv := geod.Distance(p1, p2, geod.VincentyModel).Kilometres()
-	fmt.Printf("  Distance: (Vincenty) %vkm\n", dv)
-	fmt.Printf("  Distance: (rhumb) %vkm\n", dr)
-	fmt.Printf("  Distance: (Vincenty along rhumb line) %vkm\n", vincentyDistAlongRhumb(p1, p2).Kilometres())
-	fmt.Printf("  Distance: (spherical) %vkm\n", ds)
-	fmt.Printf("  Midpoint distances: spherical to Vincenty: %vm\n", geod.Distance(mps, mpv, geod.VincentyModel).Metres())
-	fmt.Printf("  Midpoint distances: spherical to rhumb: %vm\n", geod.Distance(mps, mpr, geod.VincentyModel).Metres())
-	fmt.Printf("  Midpoint distances: rhumb to Vincenty: %vm\n", geod.Distance(mpr, mpv, geod.VincentyModel).Metres())
+	ds := geod.Distance(p1, p2, geod.SphericalModel).Km()
+	dr := geod.Distance(p1, p2, geod.RhumbModel).Km()
+	dv := geod.Distance(p1, p2, geod.VincentyModel).Km()
+	fmt.Printf("  Distance: (Vincenty) %v\n", dv)
+	fmt.Printf("  Distance: (rhumb) %v\n", dr)
+	fmt.Printf("  Distance: (Vincenty along rhumb line) %v\n", vincentyDistAlongRhumb(p1, p2).Km())
+	fmt.Printf("  Distance: (spherical) %v\n", ds)
+	fmt.Printf("  Midpoint distances: spherical to Vincenty: %v\n", geod.Distance(mps, mpv, geod.VincentyModel).Metre())
+	fmt.Printf("  Midpoint distances: spherical to rhumb: %v\n", geod.Distance(mps, mpr, geod.VincentyModel).Metre())
+	fmt.Printf("  Midpoint distances: rhumb to Vincenty: %v\n", geod.Distance(mpr, mpv, geod.VincentyModel).Metre())
 }
 
 func TestSgnBwn(t *testing.T) {
@@ -83,15 +83,15 @@ func TestSgnBwn(t *testing.T) {
 	fmt.Printf("  Midpoint: (spherical) %v\n", mps)
 	fmt.Printf("  Midpoint: (rhumb) %v\n", mpr)
 	fmt.Printf("  Midpoint: (Vincenty) %v\n", mpv)
-	ds := geod.Distance(p1, p2, geod.SphericalModel).Kilometres()
-	dr := geod.Distance(p1, p2, geod.RhumbModel).Kilometres()
-	dv := geod.Distance(p1, p2, geod.VincentyModel).Kilometres()
-	fmt.Printf("  Distance: (spherical) %vkm\n", ds)
-	fmt.Printf("  Distance: (rhumb) %vkm\n", dr)
-	fmt.Printf("  Distance: (Vincenty) %vkm\n", dv)
-	fmt.Printf("  Midpoint distances: spherical to Vincenty: %vm\n", geod.Distance(mps, mpv, geod.VincentyModel).Metres())
-	fmt.Printf("  Midpoint distances: spherical to rhumb: %vm\n", geod.Distance(mps, mpr, geod.VincentyModel).Metres())
-	fmt.Printf("  Midpoint distances: rhumb to Vincenty: %vm\n", geod.Distance(mpr, mpv, geod.VincentyModel).Metres())
+	ds := geod.Distance(p1, p2, geod.SphericalModel).Km()
+	dr := geod.Distance(p1, p2, geod.RhumbModel).Km()
+	dv := geod.Distance(p1, p2, geod.VincentyModel).Km()
+	fmt.Printf("  Distance: (spherical) %v\n", ds)
+	fmt.Printf("  Distance: (rhumb) %v\n", dr)
+	fmt.Printf("  Distance: (Vincenty) %v\n", dv)
+	fmt.Printf("  Midpoint distances: spherical to Vincenty: %v\n", geod.Distance(mps, mpv, geod.VincentyModel).Metre())
+	fmt.Printf("  Midpoint distances: spherical to rhumb: %v\n", geod.Distance(mps, mpr, geod.VincentyModel).Metre())
+	fmt.Printf("  Midpoint distances: rhumb to Vincenty: %v\n", geod.Distance(mpr, mpv, geod.VincentyModel).Metre())
 }
 
 func BenchmarkMidPointSpherical(b *testing.B) {

@@ -19,13 +19,13 @@ func TestSegmentError(t *testing.T) {
 	p2 := orb.Point{-165, -25}
 
 	e := utils.SegmentError(p0, p1, geod.SphericalModel)
-	assert.InDelta(t, e.Kilometres(), 75.0483, 0.0001)
+	assert.InDelta(t, float64(e.Km()), 75.0483, 0.0001)
 
 	e = utils.SegmentError(p0, p1, geod.RhumbModel)
-	assert.Equal(t, 0.0, e.Kilometres())
+	assert.Equal(t, 0.0, float64(e.Km()))
 
 	e = utils.SegmentError(p1, p2, geod.RhumbModel)
-	assert.InDelta(t, e.Kilometres(), 18.2367, 0.0001)
+	assert.InDelta(t, float64(e.Km()), 18.2367, 0.0001)
 }
 
 func TestDensifyRing(t *testing.T) {
@@ -37,10 +37,10 @@ func TestDensifyRing(t *testing.T) {
 	e := utils.SegmentError(p0, p1, geod.SphericalModel)
 	r2 := utils.DensifyRing(ring, e, geod.SphericalModel)
 	assert.Equal(t, ring, r2)
-	r3 := utils.DensifyRing(ring, e-1*units.Metre, geod.SphericalModel)
+	r3 := utils.DensifyRing(ring, units.Metre(float64(e.Metre())-1), geod.SphericalModel)
 	assert.Len(t, r3, 5)
 
-	denseRing := utils.DensifyRing(ring, 10*units.Metre, geod.RhumbModel)
+	denseRing := utils.DensifyRing(ring, units.Metre(10), geod.RhumbModel)
 	assert.Len(t, denseRing, 130)
 
 	/*
@@ -52,6 +52,6 @@ func TestDensifyRing(t *testing.T) {
 	*/
 
 	// should be the same
-	denseAgainRing := utils.DensifyRing(denseRing, 10*units.Metre, geod.RhumbModel)
+	denseAgainRing := utils.DensifyRing(denseRing, units.Metre(10), geod.RhumbModel)
 	assert.Equal(t, denseRing, denseAgainRing)
 }

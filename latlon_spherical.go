@@ -111,7 +111,7 @@ func (lls LatLonSpherical)DistanceTo(dest LatLon) units.Distance {
         c := 2 * math.Atan2(math.Sqrt(a), math.Sqrt(1-a))
         d := R * c
 
-        return units.Distance(d) * units.Metre
+        return units.Metre(d)
 }
 
 

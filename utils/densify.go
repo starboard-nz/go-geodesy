@@ -69,7 +69,7 @@ func DensifyRing(ring orb.Ring, tolerance units.Distance, earthModel func(geod.L
 // DensifySegment inserts intermediate points into the segment p0-p1 using the given Model,
 // until the maximum distance between planar geometry and the given model is less than the tolerance.
 func DensifySegment(p0, p1 orb.Point, tolerance units.Distance, earthModel func(geod.LatLon, ...interface{}) geod.Model) []orb.Point {
-	if SegmentError(p0, p1, earthModel) <= tolerance {
+	if SegmentError(p0, p1, earthModel).Metre() <= tolerance.Metre() {
 		return []orb.Point{p0, p1}
 	}
 
@@ -81,13 +81,13 @@ func DensifySegment(p0, p1 orb.Point, tolerance units.Distance, earthModel func(
 
 	var left, right []orb.Point
 
-	if SegmentError(p0, omp, earthModel) > tolerance {
+	if SegmentError(p0, omp, earthModel).Metre() > tolerance.Metre() {
 		left = DensifySegment(p0, omp, tolerance, earthModel)
 	} else {
 		left = []orb.Point{p0, omp}
 	}
 
-	if SegmentError(omp, p1, earthModel) > tolerance {
+	if SegmentError(omp, p1, earthModel).Metre() > tolerance.Metre() {
 		right = DensifySegment(omp, p1, tolerance, earthModel)
 	} else {
 		right = []orb.Point{omp, p1}
@@ -105,7 +105,7 @@ func DensifySegment(p0, p1 orb.Point, tolerance units.Distance, earthModel func(
 func SegmentError(p0, p1 orb.Point, model geod.EarthModel) units.Distance {
 	// following a longitude circle, all supported models are identical
 	if p0[0] == p1[0] {
-		return 0
+		return units.Metre(0)
 	}
 
 	ll0 := geod.LatLon{Latitude: geod.Degrees(p0[1]), Longitude: geod.Degrees(p0[0])}

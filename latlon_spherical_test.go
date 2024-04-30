@@ -14,12 +14,12 @@ import (
 func TestSpherical(t *testing.T) {
 	p1 := NewLatLonSpherical(52.205, 0.119)
 	p2 := NewLatLon(48.857, 2.351)
-	if math.Round(p1.DistanceTo(p2).Metres()) != 404279 {
+	if math.Round(float64(p1.DistanceTo(p2).Metre())) != 404279 {
 		t.Errorf("Incorrect result")
 	}
 	
 	SetEarthRadius(3959.0)
-	if math.Round(10 * p1.DistanceTo(p2).Metres()) != 2512 {
+	if math.Round(10 * float64(p1.DistanceTo(p2).Metre())) != 2512 {
 		t.Errorf("Incorrect result")
 	}
 	SetEarthRadius(6371000.0)

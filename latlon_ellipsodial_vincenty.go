@@ -152,7 +152,7 @@ func (llv LatLonEllipsoidalVincenty)VincentyDirect(distance float64, initialBear
 // Returns (distance from `llv` to `dest`, initial bearing in degrees from North, final bearing in degrees from North)
 func (llv LatLonEllipsoidalVincenty)VincentyInverse(dest LatLon) (units.Distance, Degrees, Degrees) {
 	if llv.ll.Equals(dest) {
-		return 0, Degrees(math.NaN()), Degrees(math.NaN())
+		return units.Metre(math.NaN()), Degrees(math.NaN()), Degrees(math.NaN())
 	}
 
 	const π = math.Pi
@@ -221,7 +221,7 @@ func (llv LatLonEllipsoidalVincenty)VincentyInverse(dest LatLon) (units.Distance
 			iterationCheck = math.Abs(λ)
 		}
 		if (iterationCheck > π) {
-			return units.Distance(math.NaN()), Degrees(math.NaN()), Degrees(math.NaN())
+			return units.Metre(math.NaN()), Degrees(math.NaN()), Degrees(math.NaN())
 		}
 		iterations++
 		if math.Abs(λ - λʹ) <= 1e-12 || iterations >= 1000 {
@@ -230,7 +230,7 @@ func (llv LatLonEllipsoidalVincenty)VincentyInverse(dest LatLon) (units.Distance
         }
 
         if iterations >= 1000 {
-		return units.Distance(math.NaN()), Degrees(math.NaN()), Degrees(math.NaN())
+		return units.Metre(math.NaN()), Degrees(math.NaN()), Degrees(math.NaN())
 	}
 
         uSq := cosSqα * (a * a - b * b) / (b * b)
@@ -261,7 +261,7 @@ func (llv LatLonEllipsoidalVincenty)VincentyInverse(dest LatLon) (units.Distance
 	if math.Abs(s) >= ε {
 		finalBearing = Wrap360(DegreesFromRadians(α2))
 	}
-        return units.Distance(s) * units.Metre, initialBearing, finalBearing
+        return units.Metre(s), initialBearing, finalBearing
 }
 
 // DistanceTo returns the distance along the surface of the earth from `llv` to `dest` using Vincenty Inverse calculation
@@ -275,8 +275,8 @@ func (llv LatLonEllipsoidalVincenty)VincentyInverse(dest LatLon) (units.Distance
 // Examples:
 // p1 := geod.NewLatLonEllipsodialVincenty(52.205, 0.119, geod.WGS84())
 // p2 := geod.LatLon{48.857, 2.351}
-// d := p1.DistanceTo(p2).Metres()       // 404.3×10³ m
-// m := p1.DistanceTo(p2, 3959).Miles()  // 251.2 miles
+// d := p1.DistanceTo(p2).Metre()       // 404.3×10³ m
+// m := p1.DistanceTo(p2, 3959).Mile()  // 251.2 miles
 func (llv LatLonEllipsoidalVincenty)DistanceTo(dest LatLon) units.Distance {
 	dist, _, _ := llv.VincentyInverse(dest)
 	return dist
@@ -332,7 +332,7 @@ func (llv LatLonEllipsoidalVincenty)FinalBearingOn(dest LatLon) Degrees {
 // pMid := p1.MidPointTo(p2)
 func (llv LatLonEllipsoidalVincenty)MidPointTo(dest LatLon) LatLon {
 	distance, initialBearing, _ := llv.VincentyInverse(dest)
-	point, _ := llv.VincentyDirect(distance.Metres() / 2, initialBearing)
+	point, _ := llv.VincentyDirect(float64(distance.Metre() / 2), initialBearing)
 	return point
 }
 
@@ -358,7 +358,7 @@ func (llv LatLonEllipsoidalVincenty)IntermediatePointsTo(dest LatLon, fractions 
 	for i, fraction := range(fractions) {
 		waitGroup.Add(1)
 		go func(i int, fraction float64) {
-			points[i], _ = llv.VincentyDirect(distance.Metres() * fraction, initialBearing)
+			points[i], _ = llv.VincentyDirect(float64(distance.Metre()) * fraction, initialBearing)
 			waitGroup.Done()
 		} (i, fraction)
 	}
@@ -385,7 +385,7 @@ func (llv LatLonEllipsoidalVincenty)IntermediatePointsTo(dest LatLon, fractions 
 func (llv LatLonEllipsoidalVincenty)IntermediatePointTo(dest LatLon, fraction float64) LatLon {
 	distance, initialBearing, _ := llv.VincentyInverse(dest)
 
-	point, _ := llv.VincentyDirect(distance.Metres() * fraction, initialBearing)
+	point, _ := llv.VincentyDirect(float64(distance.Metre()) * fraction, initialBearing)
 	return point
 }
 

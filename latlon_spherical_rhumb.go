@@ -62,7 +62,7 @@ func NewLatLonRhumb(latitude, longitude Degrees) LatLonRhumb {
 // Examples:
 // p1 := geod.NewLatLonRhumb(51.127, 1.338)
 // p2 := geod.NewLatLonRhumb(50.964, 1.853)
-// d := p1.DistanceTo(p2).Kilometres()  //  40.31 km
+// d := p1.DistanceTo(p2).Km()  //  40.31 km
 func (llr LatLonRhumb)DistanceTo(dest LatLon) units.Distance {
         // see www.edwilliams.org/avform.htm#Rhumb
 
@@ -95,7 +95,7 @@ func (llr LatLonRhumb)DistanceTo(dest LatLon) units.Distance {
         δ := math.Sqrt(Δφ*Δφ + q*q * Δλ*Δλ)  // angular distance in radians
         d := δ * R
 
-        return units.Distance(d) * units.Metre
+        return units.Metre(d)
 }
 
 // InitialBearingTo returns the bearing from `lls` to `dest`. In the case of rhumb lines the bearing is constant, so
@@ -267,7 +267,7 @@ func (llr LatLonRhumb)IntermediatePointTo(dest LatLon, fraction float64) LatLon 
 	}
 
 	dist := llr.DistanceTo(dest)
-	frDist := dist.Metres() * fraction
+	frDist := float64(dist.Metre()) * fraction
 	bearing := llr.InitialBearingTo(dest)
 	return llr.DestinationPoint(frDist, bearing)
 }
@@ -295,7 +295,7 @@ func (llr LatLonRhumb)IntermediatePointsTo(dest LatLon, fractions []float64) []L
 	for i, fraction := range(fractions) {
 		waitGroup.Add(1)
 		go func(i int, fraction float64) {
-			frDist := dist.Metres() * fraction
+			frDist := float64(dist.Metre()) * fraction
 			points[i] = llr.DestinationPoint(frDist, bearing)
 			waitGroup.Done()
 		} (i, fraction)
