@@ -8,7 +8,8 @@ import (
 )
 
 // NOTE for the following containment functions, we assume the passed Ring/Polygon/Multipolygon has been sufficiently
-// densified according to the relevant EarthModel so that the bounds tests will be accurate.
+// densified according to the relevant EarthModel so that the bounds tests will be accurate - this is releveant in the
+// case of spherical and ellipsoidal EarthModels, the bounds will still be accurate if using the rhumb model.
 
 // RingContains returns true if the point is inside the ring.
 // Points on the boundary of the external ring are considered in, points on the bondary of a hole are not.

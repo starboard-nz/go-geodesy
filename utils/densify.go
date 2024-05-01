@@ -8,6 +8,8 @@ import (
 	"github.com/starboard-nz/units"
 )
 
+// NOTE - these densify functions will only work as expected if passing geometries in the normalised (-180 to 180) range.
+
 // DensifyMultiPolygon inserts points into the multipolygon using the given Model, until the maximum distance between
 // planar geometry and the given model is less than the tolerance.
 func DensifyMultiPolygon(mp orb.MultiPolygon, tolerance units.Distance, earthModel func(geod.LatLon, ...interface{}) geod.Model) orb.MultiPolygon {
@@ -121,7 +123,7 @@ func SegmentError(p0, p1 orb.Point, model geod.EarthModel) units.Distance {
 	// planar halfway point (aka Flat Earth™)
 	var llFE geod.LatLon
 
-	if math.Abs(p0[0]-p1[0]) < 180 {
+	if math.Abs(p0[0]-p1[0]) <= 180 {
 		llFE = geod.LatLon{Latitude: geod.Degrees((p0[1] + p1[1]) / 2), Longitude: geod.Degrees((p0[0] + p1[0]) / 2)}
 	} else {
 		mid := (p0[0]+p1[0])/2 + 180
