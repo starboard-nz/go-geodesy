@@ -34,7 +34,7 @@ type LatLonSpherical struct {
 // SphericalModel returns a `Model` that wraps geodesy calculations using spherical Earth model along great circles
 func SphericalModel(ll LatLon, modelArgs ...interface{}) Model {
 	if len(modelArgs) != 0 {
-		panic("Invalid number of arguments in call to VincentyModel()")
+		panic("Invalid number of arguments in call to SphericalModel()")
 	}
 	return LatLonSpherical{ll: ll}
 }

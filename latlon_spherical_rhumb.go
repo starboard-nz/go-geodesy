@@ -122,7 +122,7 @@ func (llr LatLonRhumb)InitialBearingTo(dest LatLon) Degrees {
         Δλ := (dest.Longitude - llr.ll.Longitude).Radians()
 
         // if dLon over 180° take shorter rhumb line across the anti-meridian:
-        if math.Abs(Δλ) > π {
+        if math.Abs(Δλ) >= π {
 		if Δλ > 0 {
 			Δλ = -(2 * π - Δλ)
 		} else {
@@ -228,7 +228,7 @@ func (llr LatLonRhumb)MidPointTo(dest LatLon) LatLon {
         φ2 := dest.Latitude.Radians()
 	λ2 := dest.Longitude.Radians()
 
-        if math.Abs(λ2 - λ1) > π {
+        if math.Abs(λ2 - λ1) >= π {
 		λ1 += 2 * π    // crossing anti-meridian
 	}
 

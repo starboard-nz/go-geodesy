@@ -57,4 +57,3 @@ func TestSpherical(t *testing.T) {
 		t.Errorf("Incorrect result")
 	}
 }
-

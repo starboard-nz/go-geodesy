@@ -2,6 +2,8 @@ package geod
 
 import (
 	"math"
+
+	"github.com/starboard-nz/orb"
 )
 
 type MercatorPoint struct {
@@ -39,4 +41,8 @@ func (mp MercatorPoint) LatLon() LatLon {
 	lon := Degrees(mp.X * 360 - 180)
 
 	return LatLon{Latitude: lat, Longitude: lon}
+}
+
+func MultiPolygonToMercator(mp orb.MultiPolygon) orb.MultiPolygon {
+	return nil
 }
