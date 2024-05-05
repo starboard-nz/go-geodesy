@@ -91,7 +91,7 @@ func (lls LatLonPlanar) DistanceTo(dest LatLon) units.Distance {
 	dx := x0 - x1
 
 	// antimeridian issues
-	if math.Abs(float64(dx)) >= 180 {
+	if math.Abs(float64(dx)) > 180 {
 		if dx < 0 {
 			dx += 360
 		} else {
@@ -109,7 +109,7 @@ func (lls LatLonPlanar) InitialBearingTo(ll LatLon) Degrees {
 	dx := Wrap180(ll.Longitude) - Wrap180(lls.ll.Longitude)
 
 	// antimeridian issues
-	if math.Abs(float64(dx)) >= 180 {
+	if math.Abs(float64(dx)) > 180 {
 		if dx < 0 {
 			dx += 360
 		} else {
@@ -156,7 +156,7 @@ func (lls LatLonPlanar) IntermediatePointTo(ll LatLon, fraction float64) LatLon 
 	dx := Wrap180(ll.Longitude) - Wrap180(lls.ll.Longitude)
 
 	// antimeridian issues
-	if math.Abs(float64(dx)) >= 180 {
+	if math.Abs(float64(dx)) > 180 {
 		if dx < 0 {
 			dx += 360
 		} else {
