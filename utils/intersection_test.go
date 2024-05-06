@@ -35,17 +35,45 @@ func TestSegmentIntersection(t *testing.T) {
 		require.Nil(t, is)
 	})
 
-	/*
-		t.Run("Colinear", func(t *testing.T) {
-			p1 := orb.Point{0, 0}
-			p2 := orb.Point{20, 20}
-			q1 := orb.Point{20, 20}
-			q2 := orb.Point{40, 40}
+	t.Run("Colinear", func(t *testing.T) {
+		p1 := orb.Point{0, 0}
+		p2 := orb.Point{20, 20}
+		q1 := orb.Point{10, 10}
+		q2 := orb.Point{30, 30}
 
-			is := utils.SegmentIntersection(p1, p2, q1, q2)
-			require.Nil(t, is)
-		})
-	*/
+		is := utils.SegmentIntersection(p1, p2, q1, q2)
+		require.NotNil(t, is)
+	})
+
+	t.Run("Colinear sharing a point", func(t *testing.T) {
+		p1 := orb.Point{0, 0}
+		p2 := orb.Point{20, 20}
+		q1 := orb.Point{20, 20}
+		q2 := orb.Point{40, 40}
+
+		is := utils.SegmentIntersection(p1, p2, q1, q2)
+		require.NotNil(t, is)
+	})
+
+	t.Run("Sharing a point", func(t *testing.T) {
+		p1 := orb.Point{0, 0}
+		p2 := orb.Point{20, 20}
+		q1 := orb.Point{20, 20}
+		q2 := orb.Point{40, 60}
+
+		is := utils.SegmentIntersection(p1, p2, q1, q2)
+		require.NotNil(t, is)
+	})
+
+	t.Run("Middle of one line intersects point of the other", func(t *testing.T) {
+		p1 := orb.Point{0, 0}
+		p2 := orb.Point{20, 20}
+		q1 := orb.Point{20, 0}
+		q2 := orb.Point{20, 40}
+
+		is := utils.SegmentIntersection(p1, p2, q1, q2)
+		require.NotNil(t, is)
+	})
 
 	t.Run("No intersection", func(t *testing.T) {
 		p1 := orb.Point{0, 0}
@@ -55,6 +83,36 @@ func TestSegmentIntersection(t *testing.T) {
 
 		is := utils.SegmentIntersection(p1, p2, q1, q2)
 		require.Nil(t, is)
+	})
+
+	t.Run("Intersection on AM crossing lines", func(t *testing.T) {
+		p1 := orb.Point{170, 10}
+		p2 := orb.Point{-170, -10}
+		q1 := orb.Point{-170, 10}
+		q2 := orb.Point{170, -10}
+
+		is := utils.SegmentIntersection(p1, p2, q1, q2)
+		require.NotNil(t, is)
+	})
+
+	t.Run("Intersection on AM crossing lines", func(t *testing.T) {
+		p1 := orb.Point{170, 10}
+		p2 := orb.Point{-170, -20}
+		q1 := orb.Point{-170, 20}
+		q2 := orb.Point{170, -10}
+
+		is := utils.SegmentIntersection(p1, p2, q1, q2)
+		require.NotNil(t, is)
+	})
+
+	t.Run("Intersection on AM crossing lines", func(t *testing.T) {
+		p1 := orb.Point{170, 10}
+		p2 := orb.Point{-170, -10}
+		q1 := orb.Point{-175, 10}
+		q2 := orb.Point{-175, -10}
+
+		is := utils.SegmentIntersection(p1, p2, q1, q2)
+		require.NotNil(t, is)
 	})
 }
 
@@ -79,17 +137,15 @@ func TestSegmentsIntersect(t *testing.T) {
 		require.False(t, is)
 	})
 
-	/*
-		t.Run("Colinear", func(t *testing.T) {
-			p1 := orb.Point{0, 0}
-			p2 := orb.Point{20, 20}
-			q1 := orb.Point{20, 20}
-			q2 := orb.Point{40, 40}
+	t.Run("Colinear sharing a point", func(t *testing.T) {
+		p1 := orb.Point{0, 0}
+		p2 := orb.Point{20, 20}
+		q1 := orb.Point{20, 20}
+		q2 := orb.Point{40, 40}
 
-			is := utils.SegmentsIntersect(p1, p2, q1, q2)
-			require.False(t, is)
-		})
-	*/
+		is := utils.SegmentsIntersect(p1, p2, q1, q2)
+		require.True(t, is)
+	})
 
 	t.Run("No intersection", func(t *testing.T) {
 		p1 := orb.Point{0, 0}

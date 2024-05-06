@@ -147,7 +147,7 @@ func densifySegment(ll0, ll1 geod.LatLon, pf, pt orb.Point, from, to float64, mo
 	refMp := geod.IntermediatePoint(llf, llt, 0.5, refModel)
 	e := geod.Distance(mp, refMp, model).Metre()
 
-	if e.Metre() <= tolerance.Metre() {
+	if e <= tolerance.Metre() {
 		return []orb.Point{pf, pt}, nil
 	}
 
