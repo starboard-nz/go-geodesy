@@ -3,12 +3,14 @@ package utils_test
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	geod "github.com/starboard-nz/go-geodesy"
 	"github.com/starboard-nz/go-geodesy/utils"
 	"github.com/starboard-nz/orb"
 )
 
-func TestRingContains(t *testing.T) {
+func testRingContains(t *testing.T, model geod.EarthModel) {
 	ring := orb.Ring{
 		{0, 0}, {0, 1}, {1, 1}, {1, 0.5}, {2, 0.5},
 		{2, 1}, {3, 1}, {3, 0}, {0, 0},
@@ -75,7 +77,7 @@ func TestRingContains(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			ring.Reverse()
-			val := utils.RingContains(ring, tc.point, false, geod.RhumbModel)
+			val := utils.RingContains(ring, tc.point, false, model)
 
 			if val != tc.result {
 				t.Errorf("wrong containment: %v != %v", val, tc.result)
@@ -83,7 +85,7 @@ func TestRingContains(t *testing.T) {
 
 			// should not care about orientation
 			ring.Reverse()
-			val = utils.RingContains(ring, tc.point, false, geod.RhumbModel)
+			val = utils.RingContains(ring, tc.point, false, model)
 			if val != tc.result {
 				t.Errorf("wrong containment: %v != %v", val, tc.result)
 			}
@@ -92,7 +94,7 @@ func TestRingContains(t *testing.T) {
 
 	// points should all be in
 	for i, p := range ring {
-		if !utils.RingContains(ring, p, false, geod.RhumbModel) {
+		if !utils.RingContains(ring, p, false, model) {
 			t.Errorf("point index %d: should be inside", i)
 		}
 	}
@@ -100,7 +102,7 @@ func TestRingContains(t *testing.T) {
 	// on all the segments should be in.
 	for i := 1; i < len(ring); i++ {
 		c := interpolate(ring[i], ring[i-1], 0.5)
-		if !utils.RingContains(ring, c, false, geod.RhumbModel) {
+		if !utils.RingContains(ring, c, false, model) {
 			t.Errorf("index %d centroid: should be inside", i)
 		}
 	}
@@ -108,15 +110,91 @@ func TestRingContains(t *testing.T) {
 	// colinear with segments but outside
 	for i := 1; i < len(ring); i++ {
 		p := interpolate(ring[i], ring[i-1], 5)
-		if utils.RingContains(ring, p, false, geod.RhumbModel) {
+		if utils.RingContains(ring, p, false, model) {
 			t.Errorf("index %d centroid: should not be inside", i)
 		}
 
 		p = interpolate(ring[i], ring[i-1], -5)
-		if utils.RingContains(ring, p, false, geod.RhumbModel) {
+		if utils.RingContains(ring, p, false, model) {
 			t.Errorf("index %d centroid: should not be inside", i)
 		}
 	}
+}
+
+func testRingContainsAntimeridian360(t *testing.T, model geod.EarthModel) {
+	ring := orb.Ring{
+		orb.Point{160, -10},
+		orb.Point{360 - 140, -10},
+		orb.Point{360 - 140, -55},
+	}
+
+	p1 := geod.NewLatLon(ring[0][1], ring[0][0])
+	p3 := geod.NewLatLon(ring[2][1], ring[2][0])
+
+	Mid := geod.MidPoint(p1, p3, model)
+	Mid.Longitude = geod.Wrap360(Mid.Longitude)
+
+	t.Logf("MidPoint = %v", Mid)
+
+	A := orb.Point{
+		float64(Mid.Longitude),          // Longitude
+		float64(Mid.Latitude) - 0.00001, // Latitude
+	}
+	B := orb.Point{
+		float64(Mid.Longitude),          // Longitude
+		float64(Mid.Latitude) + 0.00001, // Latitude
+	}
+
+	inside := utils.RingContains(ring, A, false, model)
+	assert.False(t, inside)
+
+	inside = utils.RingContains(ring, B, false, model)
+	assert.True(t, inside)
+}
+
+// Does not currently work with -180..180
+func testRingContainsAntimeridian180(t *testing.T, model geod.EarthModel) {
+	ring := orb.Ring{
+		orb.Point{160, -10},
+		orb.Point{-140, -10},
+		orb.Point{-140, -55},
+	}
+
+	p1 := geod.NewLatLon(ring[0][1], ring[0][0])
+	p3 := geod.NewLatLon(ring[2][1], ring[2][0])
+
+	Mid := geod.MidPoint(p1, p3, model)
+
+	t.Logf("MidPoint = %v", Mid)
+
+	A := orb.Point{
+		float64(Mid.Longitude),          // Longitude
+		float64(Mid.Latitude) - 0.00001, // Latitude
+	}
+	B := orb.Point{
+		float64(Mid.Longitude),          // Longitude
+		float64(Mid.Latitude) + 0.00001, // Latitude
+	}
+
+	inside := utils.RingContains(ring, A, false, model)
+	assert.False(t, inside)
+
+	inside = utils.RingContains(ring, B, false, model)
+	assert.True(t, inside)
+}
+
+func TestRingContains(t *testing.T) {
+	t.Run("Planar", func(t *testing.T) { testRingContains(t, geod.PlanarModel) })
+	t.Run("Rhumb", func(t *testing.T) { testRingContains(t, geod.RhumbModel) })
+	t.Run("Spherical", func(t *testing.T) { testRingContains(t, geod.SphericalModel) })
+	t.Run("Planar/Antimeridian360", func(t *testing.T) { testRingContainsAntimeridian360(t, geod.PlanarModel) })
+	t.Run("Rhumb/Antimeridian360", func(t *testing.T) { testRingContainsAntimeridian360(t, geod.RhumbModel) })
+	t.Run("Spherical/Antimeridian360", func(t *testing.T) { testRingContainsAntimeridian360(t, geod.SphericalModel) })
+
+	// Wrapping Longitudes from -180 to 180 doesn't work due to bounds testing
+	//t.Run("Planar/Antimeridian180", func(t *testing.T) { testRingContainsAntimeridian180(t, geod.PlanarModel) })
+	//t.Run("Rhumb/Antimeridian180", func(t *testing.T) { testRingContainsAntimeridian180(t, geod.RhumbModel) })
+	//t.Run("Spherical/Antimeridian180", func(t *testing.T) { testRingContainsAntimeridian180(t, geod.SphericalModel) })
 }
 
 func TestPolygonContains(t *testing.T) {
