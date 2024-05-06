@@ -16,7 +16,8 @@ var (
 	ErrInvalidGeometry  = errors.New("invalid geometry")
 )
 
-// NOTE - these densify functions will only work as expected if passing geometries in the normalised (-180 to 180) range.
+// The Densify functions work across the antimeridian in both the -180..180 and the 0..360 range, however,
+// the resulting densified polygons will always be in the -180..180 range.
 
 // DensifyMultiPolygon inserts points into the multipolygon using the given Model, until the maximum distance between
 // model and the reference model is less than the tolerance, where model defines the shape of the lines between points

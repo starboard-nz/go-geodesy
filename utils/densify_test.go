@@ -229,6 +229,26 @@ func TestDensifyRing(t *testing.T) {
 	})
 }
 
+func TestDensify360(t *testing.T) {
+	p0 := orb.Point{170, -10}
+	p1 := orb.Point{360-170, -10}
+	p2 := orb.Point{360-170, 10}
+	p3 := orb.Point{170, 10}
+	ring := orb.Ring{p0, p1, p2, p3, p0}
+	
+	denseRing, err := utils.DensifyRing(ring, geod.SphericalModel, geod.RhumbModel, units.Metre(10))
+	require.NoError(t, err)
+	assert.Len(t, denseRing, 131)
+
+	saveToGeoJSON("/tmp/ring360.json", []orb.Geometry{ring, denseRing}, denseRing)	
+
+	denseRing2, err := utils.DensifyRing(ring, geod.RhumbModel, geod.SphericalModel, units.Metre(10))
+	require.NoError(t, err)
+	assert.Len(t, denseRing2, 131)
+
+	saveToGeoJSON("/tmp/ring360_2.json", []orb.Geometry{ring, denseRing2}, denseRing2)	
+}
+
 func TestDensifyErrors(t *testing.T) {
 	p0 := orb.Point{-154.5000, -55}
 	p1 := orb.Point{-180.0000, -35}

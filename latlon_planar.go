@@ -13,7 +13,7 @@ import (
 )
 
 // LatLonPlanar represents a point used for calculations on a 2-dimensional plane
-// Longitudes still go -180 to 180 and wrap around and Longitudes go -90 to 90.
+// Longitudes still go -180 to 180 and wrap around and Latitudes go -90 to 90.
 // Works across the antimeridian.
 type LatLonPlanar struct {
 	ll LatLon
@@ -76,14 +76,16 @@ var lngDistances = map[int]float64{
 }
 
 func (lls LatLonPlanar) DistanceTo(dest LatLon) units.Distance {
+	const latDist = 111195 // distance of latitudes in metres
+
 	y0 := float64(Wrap90(lls.ll.Latitude))
 	y1 := float64(Wrap90(dest.Latitude))
-	dy := math.Abs(y0-y1) * 111195 // metres
+	dy := math.Abs(y0-y1) * latDist
 
 	avgLat := int(math.Round(math.Abs(y0+y1) / 2))
 	lngDist, ok := lngDistances[avgLat]
 	if !ok {
-		lngDist = 111195
+		lngDist = latDist
 	}
 
 	x0 := float64(Wrap180(lls.ll.Longitude))
