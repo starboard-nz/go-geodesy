@@ -1,10 +1,10 @@
 module github.com/starboard-nz/go-geodesy
 
-go 1.21
+go 1.19
 
 require (
 	github.com/starboard-nz/orb v0.2.2-starboard
-	github.com/starboard-nz/units v0.0.2
+	github.com/starboard-nz/units v0.0.3
 	github.com/stretchr/testify v1.9.0
 )
 
