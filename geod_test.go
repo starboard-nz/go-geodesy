@@ -124,6 +124,16 @@ func BenchmarkMidPointRhumb(b *testing.B) {
 	}
 }
 
+func BenchmarkMidPointPlanar(b *testing.B) {
+	p := getTestPositions()
+	N := len(p)
+	p = append(p, p[0])
+
+	for i := 0; i < b.N; i++ {
+		_ = geod.MidPoint(p[i%N], p[i%N+1], geod.PlanarModel)
+	}
+}
+
 func BenchmarkIntermediatePointsSpherical(b *testing.B) {
 	p := getTestPositions()
 	N := len(p)
@@ -166,6 +176,21 @@ func BenchmarkIntermediatePointsRhumb(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		_ = geod.IntermediatePoints(p[i%N], p[i%N+1], fractions, geod.RhumbModel)
+	}
+}
+
+func BenchmarkIntermediatePointsPlanar(b *testing.B) {
+	p := getTestPositions()
+	N := len(p)
+	p = append(p, p[0])
+
+	fractions := make([]float64, 0, 100)
+	for i := 0; i < 100; i++ {
+		fractions = append(fractions, float64(i)/100.0)
+	}
+
+	for i := 0; i < b.N; i++ {
+		_ = geod.IntermediatePoints(p[i%N], p[i%N+1], fractions, geod.PlanarModel)
 	}
 }
 

@@ -137,7 +137,7 @@ func DensifySegment(p0, p1 orb.Point, model, refModel geod.EarthModel, tolerance
 
 func densifySegment(ll0, ll1 geod.LatLon, pf, pt orb.Point, from, to float64, model, refModel geod.EarthModel, tolerance units.Distance, recDepth int) ([]orb.Point, error) {
 	recDepth -= 1
-	mid := (from+to)/2
+	mid := (from + to) / 2
 
 	mp := geod.IntermediatePoint(ll0, ll1, mid, model)
 
@@ -146,7 +146,7 @@ func densifySegment(ll0, ll1 geod.LatLon, pf, pt orb.Point, from, to float64, mo
 	refMp := geod.IntermediatePoint(llf, llt, 0.5, refModel)
 	e := geod.Distance(mp, refMp, model).Metre()
 
-	if  e.Metre() <= tolerance.Metre() {
+	if e.Metre() <= tolerance.Metre() {
 		return []orb.Point{pf, pt}, nil
 	}
 

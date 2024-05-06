@@ -14,9 +14,10 @@ import (
 
 // Model defines the Earth model used for calculations.
 // The following models are implemented:
-//    geod.SphericalModel  - spherical Earth, along great circles
-//    geod.RhumbModel      - spherical Earth, along rhumb lines
-//    geod.VincentyModel   - ellipsoid Earth, high accuracy, slower than SphericalModel
+//
+//	geod.SphericalModel  - spherical Earth, along great circles
+//	geod.RhumbModel      - spherical Earth, along rhumb lines
+//	geod.VincentyModel   - ellipsoid Earth, high accuracy, slower than SphericalModel
 type Model interface {
 	DistanceTo(ll LatLon) units.Distance
 	InitialBearingTo(ll LatLon) Degrees
@@ -37,10 +38,13 @@ type EarthModel func(LatLon, ...interface{}) Model
 // start - starting point
 // end - end point (destination)
 // model - a function that converts a `LatLon` to a structure appropriate for the `Model` to be used
-//         This is how you select the model you wish to use for the calculations. See the description of `Model`
-//         for list of available functions.
+//
+//	This is how you select the model you wish to use for the calculations. See the description of `Model`
+//	for list of available functions.
+//
 // modelArgs - additional arguments to pass to the `model` function, if needed, for example the `Ellipsoid`
-//         for ellipsoid models.
+//
+//	for ellipsoid models.
 //
 // Returns the halfway point.
 // If the point cannot be calculated an invalid point is returned, which can be tested using `LatLon.Valid()`
@@ -61,10 +65,13 @@ func MidPoint(start, end LatLon, model EarthModel, modelArgs ...interface{}) Lat
 // start - starting point
 // end - end point (destination)
 // model - a function that converts a `LatLon` to a structure appropriate for the `Model` to be used
-//         This is how you select the model you wish to use for the calculations. See the description of `Model`
-//         for list of available functions.
+//
+//	This is how you select the model you wish to use for the calculations. See the description of `Model`
+//	for list of available functions.
+//
 // modelArgs - additional arguments to pass to the `model` function, if needed, for example the `Ellipsoid`
-//         for ellipsoid models.
+//
+//	for ellipsoid models.
 //
 // Returns the distance in `DistanceUnits`
 // If the distance cannot be calculated an invalid  is returned, which can be tested using `DistanceUnits.Valid()`
@@ -73,7 +80,9 @@ func MidPoint(start, end LatLon, model EarthModel, modelArgs ...interface{}) Lat
 // p1 := geod.NewLatLon(10.1, -20.0)
 // p2 := geod.NewLatLon(12.1, -23.2)
 // dist := geod.MidPoint(p1, p2, geod.VincentyModel, WGS84)    // WGS84 can be omitted, it's the default and only
-//                                                                `Ellipsoid` currently defined
+//
+//	`Ellipsoid` currently defined
+//
 // metres := dist.Metres()
 func Distance(start, end LatLon, model EarthModel, modelArgs ...interface{}) units.Distance {
 	p1 := model(start, modelArgs...)
@@ -87,10 +96,13 @@ func Distance(start, end LatLon, model EarthModel, modelArgs ...interface{}) uni
 // start - starting point
 // end - end point (destination)
 // model - a function that converts a `LatLon` to a structure appropriate for the `Model` to be used
-//         This is how you select the model you wish to use for the calculations. See the description of `Model`
-//         for list of available functions.
+//
+//	This is how you select the model you wish to use for the calculations. See the description of `Model`
+//	for list of available functions.
+//
 // modelArgs - additional arguments to pass to the `model` function, if needed, for example the `Ellipsoid`
-//         for ellipsoid models.
+//
+//	for ellipsoid models.
 //
 // Returns the initial bearing in `Degrees` from North
 // If the bearing cannot be calculated NaN value is returned, which can be tested using `Degrees.Valid()`
@@ -111,10 +123,13 @@ func InitialBearing(start, end LatLon, model EarthModel, modelArgs ...interface{
 // start - starting point
 // end - end point (destination)
 // model - a function that converts a `LatLon` to a structure appropriate for the `Model` to be used
-//         This is how you select the model you wish to use for the calculations. See the description of `Model`
-//         for list of available functions.
+//
+//	This is how you select the model you wish to use for the calculations. See the description of `Model`
+//	for list of available functions.
+//
 // modelArgs - additional arguments to pass to the `model` function, if needed, for example the `Ellipsoid`
-//         for ellipsoid models.
+//
+//	for ellipsoid models.
 //
 // Returns the final bearing in `Degrees` from North
 // If the bearing cannot be calculated NaN value is returned, which can be tested using `Degrees.Valid()`
@@ -137,10 +152,13 @@ func FinalBearing(start, end LatLon, model EarthModel, modelArgs ...interface{})
 // distance - distance travelled, in metres -- Note: I might change this to DistanceUnits in the future (FIXME)
 // bearing - initial bearing in `Degrees` from North
 // model - a function that converts a `LatLon` to a structure appropriate for the `Model` to be used
-//         This is how you select the model you wish to use for the calculations. See the description of `Model`
-//         for list of available functions.
+//
+//	This is how you select the model you wish to use for the calculations. See the description of `Model`
+//	for list of available functions.
+//
 // modelArgs - additional arguments to pass to the `model` function, if needed, for example the `Ellipsoid`
-//         for ellipsoid models.
+//
+//	for ellipsoid models.
 //
 // Returns the final point (destination)
 // If the point cannot be calculated an invalid point is returned, which can be tested using `LatLon.Valid()`
@@ -164,10 +182,13 @@ func DestinationPoint(start LatLon, distance float64, bearing Degrees, model Ear
 // end - end point (destination)
 // fraction - the fraction between the two points (0.0 = `start`, 1.0 = `end`)
 // model - a function that converts a `LatLon` to a structure appropriate for the `Model` to be used
-//         This is how you select the model you wish to use for the calculations. See the description of `Model`
-//         for list of available functions.
+//
+//	This is how you select the model you wish to use for the calculations. See the description of `Model`
+//	for list of available functions.
+//
 // modelArgs - additional arguments to pass to the `model` function, if needed, for example the `Ellipsoid`
-//         for ellipsoid models.
+//
+//	for ellipsoid models.
 //
 // Returns the intermediate point at the given fraction.
 // If the point cannot be calculated an invalid point is returned, which can be tested using `LatLon.Valid()`
@@ -193,10 +214,13 @@ func IntermediatePoint(start, end LatLon, fraction float64, model EarthModel,
 // end - end point (destination)
 // fractions - slice of fractions between the two points (0.0 = `start`, 1.0 = `end`)
 // model - a function that converts a `LatLon` to a structure appropriate for the `Model` to be used
-//         This is how you select the model you wish to use for the calculations. See the description of `Model`
-//         for list of available functions.
+//
+//	This is how you select the model you wish to use for the calculations. See the description of `Model`
+//	for list of available functions.
+//
 // modelArgs - additional arguments to pass to the `model` function, if needed, for example the `Ellipsoid`
-//         for ellipsoid models.
+//
+//	for ellipsoid models.
 //
 // Returns slice of intermediate points at the given fractions.
 // Points that cannot be calculated are returned as invalid points, can be tested using `LatLon.Valid()`

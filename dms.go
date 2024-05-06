@@ -9,21 +9,21 @@ package geod
  */
 
 import (
+	"fmt"
+	"math"
+	"regexp"
 	"strconv"
 	"strings"
-	"regexp"
-	"math"
-	"fmt"
 )
 
 // FormatDeg, FormatDegMin and FormatDegMinSec are constants the control how FormatDMS should format the degree value.
 const (
-	FormatDeg = iota        // degrees
-	FormatDegMin            // degrees+minutes
-	FormatDegMinSec         // degrees+minutes+seconds
+	FormatDeg       = iota // degrees
+	FormatDegMin           // degrees+minutes
+	FormatDegMinSec        // degrees+minutes+seconds
 )
 
-const dmsSeparator = 0x202f     // U+202F = 'narrow no-break space'
+const dmsSeparator = 0x202f // U+202F = 'narrow no-break space'
 var dmsRE *regexp.Regexp = regexp.MustCompile(
 	`^-?(?:([0-9.,]+)(?:[°º]|\s|[nwseNWSE]?$))?\s*(?:([0-9.,]+)(?:[′’']|\s|[nwseNWSE]?$))?\s*(?:([0-9.,]+)[″”"]?)?\s*[nwseNWSE]?$`)
 
@@ -43,13 +43,13 @@ func ParseDMS(dms string) (Degrees, error) {
 		return 0.0, fmt.Errorf("ParseDMS: Empty string")
 	}
 
-        // check for signed decimal degrees without NSEW, if so return it directly
+	// check for signed decimal degrees without NSEW, if so return it directly
 	if fl, err := strconv.ParseFloat(dms, 64); err == nil {
 		return Degrees(fl), nil
 	}
 
 	dms = strings.TrimSpace(dms)
-        // strip off any sign or compass dir'n & split out separate d/m/s
+	// strip off any sign or compass dir'n & split out separate d/m/s
 
 	dmsParts := dmsRE.FindStringSubmatch(dms)
 	if len(dmsParts) == 0 {
@@ -71,7 +71,7 @@ func ParseDMS(dms string) (Degrees, error) {
 			return nanDegrees, fmt.Errorf("Failed to parse minutes (%v) in DMS string %q", dmsParts[2], dms)
 		}
 	}
-	
+
 	var sec float64
 	if dmsParts[3] != "" {
 		sec, err = strconv.ParseFloat(dmsParts[3], 64)
@@ -80,8 +80,8 @@ func ParseDMS(dms string) (Degrees, error) {
 		}
 	}
 
-        // and convert to decimal degrees...
-        deg += min/60.0 + sec/3600.0
+	// and convert to decimal degrees...
+	deg += min/60.0 + sec/3600.0
 
 	if strings.HasPrefix(dms, "-") || strings.HasSuffix(dms, "W") || strings.HasSuffix(dms, "S") {
 		deg = -deg
@@ -101,34 +101,34 @@ func ParseDMS(dms string) (Degrees, error) {
 // `dp` - number of decimal places to use - use -1 for defaults: 4 for d, 2 for dm, 0 for dms.
 func FormatDMS(deg Degrees, format, dp int) string {
 	degf := float64(deg)
-        if math.IsNaN(degf) || math.IsInf(degf, 0) {
+	if math.IsNaN(degf) || math.IsInf(degf, 0) {
 		// give up here if we can't make a number from degf
 		return ""
 	}
 
-        // default values
-        if dp == -1 {
+	// default values
+	if dp == -1 {
 		switch format {
-                case FormatDeg:
+		case FormatDeg:
 			dp = 4
-                case FormatDegMin:
+		case FormatDegMin:
 			dp = 2
-                case FormatDegMinSec:
+		case FormatDegMinSec:
 			dp = 0
-                default:
+		default:
 			format = FormatDeg
 			dp = 4
 		}
-        }
+	}
 
-        degf = math.Abs(degf)  // unsigned result ready for appending compass dir'n
+	degf = math.Abs(degf) // unsigned result ready for appending compass dir'n
 
-        var dms string
-        switch format {
+	var dms string
+	switch format {
 	case FormatDegMin:
-                d := math.Floor(degf)                                                       // get component deg
-                m := math.Round(math.Pow10(dp) * math.Mod(degf*60, 60.0)) / math.Pow10(dp)  // get component min
-                if m == 60.0 {                                                              // check for rounding up
+		d := math.Floor(degf)                                                    // get component deg
+		m := math.Round(math.Pow10(dp)*math.Mod(degf*60, 60.0)) / math.Pow10(dp) // get component min
+		if m == 60.0 {                                                           // check for rounding up
 			d++
 			m = 0.0
 		}
@@ -143,19 +143,19 @@ func FormatDMS(deg Degrees, format, dp int) string {
 			mpad = 1
 		}
 		dms = fmt.Sprintf("%s%s°%s%s′",
-			"00"[0:dpad],                        // left-pad with leading zeros
+			"00"[0:dpad], // left-pad with leading zeros
 			strconv.FormatFloat(d, 'f', 0, 64),
-			"0"[0:mpad],                         // left-pad with leading zeros (note may include decimals) 
+			"0"[0:mpad],                         // left-pad with leading zeros (note may include decimals)
 			strconv.FormatFloat(m, 'f', dp, 64)) // round/right-pad minutes
 	case FormatDegMinSec:
-                d := math.Floor(degf)                                                        // get component deg
-		m := math.Mod(math.Floor(degf*3600/60), 60.0)                                // get component min
-                s := math.Round(math.Pow10(dp) * math.Mod(degf*3600, 60.0)) / math.Pow10(dp) // get component sec
-		if s == 60.0 {            // check for rounding up
+		d := math.Floor(degf)                                                      // get component deg
+		m := math.Mod(math.Floor(degf*3600/60), 60.0)                              // get component min
+		s := math.Round(math.Pow10(dp)*math.Mod(degf*3600, 60.0)) / math.Pow10(dp) // get component sec
+		if s == 60.0 {                                                             // check for rounding up
 			m++
 			s = 0.0
 		}
-                if m == 60.0 {            // check for rounding up
+		if m == 60.0 { // check for rounding up
 			d++
 			m = 0.0
 		}
@@ -174,11 +174,11 @@ func FormatDMS(deg Degrees, format, dp int) string {
 			spad = 1
 		}
 		dms = fmt.Sprintf("%s%s°%s%s′%s%s″",
-			"00"[0:dpad],                        // left-pad with leading zeros
+			"00"[0:dpad], // left-pad with leading zeros
 			strconv.FormatFloat(d, 'f', 0, 64),
-			"0"[0:mpad],                         // left-pad with leading zeros
+			"0"[0:mpad], // left-pad with leading zeros
 			strconv.FormatFloat(m, 'f', 0, 64),
-			"0"[0:spad],                         // left-pad with leading zeros (note may include decimals) 
+			"0"[0:spad],                         // left-pad with leading zeros (note may include decimals)
 			strconv.FormatFloat(s, 'f', dp, 64)) // round/right-pad minutes
 	default: // FormatDeg falls under this as well
 		dpad := 0
@@ -188,40 +188,40 @@ func FormatDMS(deg Degrees, format, dp int) string {
 			dpad = 1
 		}
 		dms = fmt.Sprintf("%s%s°",
-			"00"[0:dpad],                          // left-pad with leading zeros (note may include decimals)
+			"00"[0:dpad],                           // left-pad with leading zeros (note may include decimals)
 			strconv.FormatFloat(degf, 'f', dp, 64)) // round/right-pad degrees
-        }
+	}
 
-        return dms
+	return dms
 }
 
 // Wrap360 contrains `degrees` to range 0..360 (e.g. for bearings); -1 --> 359, 361 --> 1.
 func Wrap360(degrees Degrees) Degrees {
-        if (0.0 <= float64(degrees) && float64(degrees) < 360.0) {
+	if 0.0 <= float64(degrees) && float64(degrees) < 360.0 {
 		// avoid rounding due to arithmetic ops if within range
 		return degrees
 	}
-        return Degrees(math.Mod(math.Mod(float64(degrees), 360) + 360, 360))     // sawtooth wave p:360, a:360
+	return Degrees(math.Mod(math.Mod(float64(degrees), 360)+360, 360)) // sawtooth wave p:360, a:360
 }
 
 // Wrap180 constrains `degrees` to range -180..+180 (e.g. for longitude); -181 --> 179, 181 --> -179.
 func Wrap180(degrees Degrees) Degrees {
-        if (-180.0 < float64(degrees) && float64(degrees) <= 180.0) {
+	if -180.0 < float64(degrees) && float64(degrees) <= 180.0 {
 		// avoid rounding due to arithmetic ops if within range
 		return degrees
 	}
-        return Degrees(
+	return Degrees(
 		math.Mod(
-			float64(degrees) + 180.0 + 360 * (math.Floor(math.Abs(float64(degrees)/360.0)) + 1),
-			360.0) - 180.0)          // sawtooth wave p:180, a:±180
+			float64(degrees)+180.0+360*(math.Floor(math.Abs(float64(degrees)/360.0))+1),
+			360.0) - 180.0) // sawtooth wave p:180, a:±180
 }
 
 // Wrap90 constrains `degrees` to range -90..+90 (e.g. for latitude); -91 --> -89, 91 --> 89.
 func Wrap90(degrees Degrees) Degrees {
-        if (-90.0 <= float64(degrees) && float64(degrees) <= 90.0) {
+	if -90.0 <= float64(degrees) && float64(degrees) <= 90.0 {
 		// avoid rounding due to arithmetic ops if within range
 		return degrees
 	}
 	// triangle wave p:360 a:±90 TODO: fix e.g. -315°
-        return Degrees(math.Abs(math.Mod(math.Mod(float64(degrees), 360.0) + 270.0, 360.0) - 180.0) - 90.0)
+	return Degrees(math.Abs(math.Mod(math.Mod(float64(degrees), 360.0)+270.0, 360.0)-180.0) - 90.0)
 }

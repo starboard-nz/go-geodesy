@@ -22,20 +22,20 @@ func TestPlanar(t *testing.T) {
 		p1 := geod.NewLatLonPlanar(20, 20)
 
 		testData := map[geod.LatLon]float64{
-			geod.NewLatLon(50, 20): 0,
-			geod.NewLatLon(20, 50): 90,
-			geod.NewLatLon(-10, 20): 180,
-			geod.NewLatLon(20, -10): 270,
-			geod.NewLatLon(50, 50): 45,
-			geod.NewLatLon(-10, 50): 135,
-			geod.NewLatLon(-10, -10): 225,
-			geod.NewLatLon(50, -10): 315,
-			geod.NewLatLon(20, 20): math.NaN(),
-			geod.NewLatLon(20 + math.Sqrt(1600-400), 40): 30,
-			geod.NewLatLon(0, 20 + math.Sqrt(1600-400)): 120,
-			geod.NewLatLon(20 - math.Sqrt(1600-400), 0): 210,
-			geod.NewLatLon(0, 20 - math.Sqrt(1600-400)): 240,
-			geod.NewLatLon(40, 20 - math.Sqrt(1600-400)): 300,
+			geod.NewLatLon(50, 20):                     0,
+			geod.NewLatLon(20, 50):                     90,
+			geod.NewLatLon(-10, 20):                    180,
+			geod.NewLatLon(20, -10):                    270,
+			geod.NewLatLon(50, 50):                     45,
+			geod.NewLatLon(-10, 50):                    135,
+			geod.NewLatLon(-10, -10):                   225,
+			geod.NewLatLon(50, -10):                    315,
+			geod.NewLatLon(20, 20):                     math.NaN(),
+			geod.NewLatLon(20+math.Sqrt(1600-400), 40): 30,
+			geod.NewLatLon(0, 20+math.Sqrt(1600-400)):  120,
+			geod.NewLatLon(20-math.Sqrt(1600-400), 0):  210,
+			geod.NewLatLon(0, 20-math.Sqrt(1600-400)):  240,
+			geod.NewLatLon(40, 20-math.Sqrt(1600-400)): 300,
 		}
 
 		for ll, exp := range testData {
@@ -48,20 +48,20 @@ func TestPlanar(t *testing.T) {
 		p1 := geod.NewLatLonPlanar(20, 170)
 
 		testData := map[geod.LatLon]float64{
-			geod.NewLatLon(50, 170): 0,
-			geod.NewLatLon(20, -160): 90,
-			geod.NewLatLon(-10, 170): 180,
-			geod.NewLatLon(20, 140): 270,
-			geod.NewLatLon(50, -160): 45,
-			geod.NewLatLon(-10, -160): 135,
-			geod.NewLatLon(-10, 140): 225,
-			geod.NewLatLon(50, 140): 315,
-			geod.NewLatLon(20, 170): math.NaN(),
-			geod.NewLatLon(20 + math.Sqrt(1600-400), -170): 30,
-			geod.NewLatLon(0, -190 + math.Sqrt(1600-400)): 120,
-			geod.NewLatLon(20 - math.Sqrt(1600-400), 150): 210,
-			geod.NewLatLon(0, 170 - math.Sqrt(1600-400)): 240,
-			geod.NewLatLon(40, 170 - math.Sqrt(1600-400)): 300,
+			geod.NewLatLon(50, 170):                      0,
+			geod.NewLatLon(20, -160):                     90,
+			geod.NewLatLon(-10, 170):                     180,
+			geod.NewLatLon(20, 140):                      270,
+			geod.NewLatLon(50, -160):                     45,
+			geod.NewLatLon(-10, -160):                    135,
+			geod.NewLatLon(-10, 140):                     225,
+			geod.NewLatLon(50, 140):                      315,
+			geod.NewLatLon(20, 170):                      math.NaN(),
+			geod.NewLatLon(20+math.Sqrt(1600-400), -170): 30,
+			geod.NewLatLon(0, -190+math.Sqrt(1600-400)):  120,
+			geod.NewLatLon(20-math.Sqrt(1600-400), 150):  210,
+			geod.NewLatLon(0, 170-math.Sqrt(1600-400)):   240,
+			geod.NewLatLon(40, 170-math.Sqrt(1600-400)):  300,
 		}
 
 		for ll, exp := range testData {
@@ -74,21 +74,21 @@ func TestPlanar(t *testing.T) {
 		p1 := geod.NewLatLonPlanar(20, -160)
 
 		testData := map[geod.LatLon]float64{
-			geod.NewLatLon(50, -160): 0,
-			geod.NewLatLon(20, -130): 90,
-			geod.NewLatLon(-10, -160): 180,
-			geod.NewLatLon(20, 170): 270,
-			geod.NewLatLon(50, -130): 45,
-			geod.NewLatLon(-10, -130): 135,
-			geod.NewLatLon(-10, 170): 225,
-			geod.NewLatLon(50, 170): 315,
-			geod.NewLatLon(20, -160): math.NaN(),
-			geod.NewLatLon(20 + math.Sqrt(1600-400), -140): 30,
-			geod.NewLatLon(0, -160 + math.Sqrt(1600-400)): 120,
-			geod.NewLatLon(20 - math.Sqrt(1600-400), 180): 210,
-			geod.NewLatLon(20 - math.Sqrt(1600-400), -180): 210,
-			geod.NewLatLon(0, -160 - math.Sqrt(1600-400)): 240,
-			geod.NewLatLon(40, -160 - math.Sqrt(1600-400)): 300,
+			geod.NewLatLon(50, -160):                     0,
+			geod.NewLatLon(20, -130):                     90,
+			geod.NewLatLon(-10, -160):                    180,
+			geod.NewLatLon(20, 170):                      270,
+			geod.NewLatLon(50, -130):                     45,
+			geod.NewLatLon(-10, -130):                    135,
+			geod.NewLatLon(-10, 170):                     225,
+			geod.NewLatLon(50, 170):                      315,
+			geod.NewLatLon(20, -160):                     math.NaN(),
+			geod.NewLatLon(20+math.Sqrt(1600-400), -140): 30,
+			geod.NewLatLon(0, -160+math.Sqrt(1600-400)):  120,
+			geod.NewLatLon(20-math.Sqrt(1600-400), 180):  210,
+			geod.NewLatLon(20-math.Sqrt(1600-400), -180): 210,
+			geod.NewLatLon(0, -160-math.Sqrt(1600-400)):  240,
+			geod.NewLatLon(40, -160-math.Sqrt(1600-400)): 300,
 		}
 
 		for ll, exp := range testData {
@@ -129,14 +129,14 @@ func TestPlanar(t *testing.T) {
 		}
 
 		testData := map[testPoints]geod.LatLon{
-			{p0: geod.NewLatLonPlanar(-10, 10), p1: geod.LatLon{Latitude: 30, Longitude: 50}, fr: 0.5}:{Latitude: 10, Longitude: 30},
-			{p0: geod.NewLatLonPlanar(-10, 10), p1: geod.LatLon{Latitude: 30, Longitude: 50}, fr: 0.25}:{Latitude: 0, Longitude: 20},
-			{p0: geod.NewLatLonPlanar(0, 170), p1: geod.LatLon{Latitude: 0, Longitude: -150}, fr: 0.50}:{Latitude: 0, Longitude: -170},
-			{p0: geod.NewLatLonPlanar(0, 170), p1: geod.LatLon{Latitude: 0, Longitude: -150}, fr: 0.25}:{Latitude: 0, Longitude: 180},
-			{p0: geod.NewLatLonPlanar(0, 180), p1: geod.LatLon{Latitude: 0, Longitude: -180}, fr: 0.25}:{Latitude: 0, Longitude: 180},
-			{p0: geod.NewLatLonPlanar(0, -150), p1: geod.LatLon{Latitude: 0, Longitude: 170}, fr: 0.50}:{Latitude: 0, Longitude: -170},
-			{p0: geod.NewLatLonPlanar(0, -150), p1: geod.LatLon{Latitude: 0, Longitude: 170}, fr: 0.75}:{Latitude: 0, Longitude: -180},
-			{p0: geod.NewLatLonPlanar(0, -150), p1: geod.LatLon{Latitude: 0, Longitude: 170}, fr: 0.80}:{Latitude: 0, Longitude: 178},
+			{p0: geod.NewLatLonPlanar(-10, 10), p1: geod.LatLon{Latitude: 30, Longitude: 50}, fr: 0.5}:  {Latitude: 10, Longitude: 30},
+			{p0: geod.NewLatLonPlanar(-10, 10), p1: geod.LatLon{Latitude: 30, Longitude: 50}, fr: 0.25}: {Latitude: 0, Longitude: 20},
+			{p0: geod.NewLatLonPlanar(0, 170), p1: geod.LatLon{Latitude: 0, Longitude: -150}, fr: 0.50}: {Latitude: 0, Longitude: -170},
+			{p0: geod.NewLatLonPlanar(0, 170), p1: geod.LatLon{Latitude: 0, Longitude: -150}, fr: 0.25}: {Latitude: 0, Longitude: 180},
+			{p0: geod.NewLatLonPlanar(0, 180), p1: geod.LatLon{Latitude: 0, Longitude: -180}, fr: 0.25}: {Latitude: 0, Longitude: 180},
+			{p0: geod.NewLatLonPlanar(0, -150), p1: geod.LatLon{Latitude: 0, Longitude: 170}, fr: 0.50}: {Latitude: 0, Longitude: -170},
+			{p0: geod.NewLatLonPlanar(0, -150), p1: geod.LatLon{Latitude: 0, Longitude: 170}, fr: 0.75}: {Latitude: 0, Longitude: -180},
+			{p0: geod.NewLatLonPlanar(0, -150), p1: geod.LatLon{Latitude: 0, Longitude: 170}, fr: 0.80}: {Latitude: 0, Longitude: 178},
 		}
 
 		for d, exp := range testData {
@@ -145,4 +145,3 @@ func TestPlanar(t *testing.T) {
 		}
 	})
 }
-

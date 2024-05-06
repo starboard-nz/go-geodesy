@@ -14,7 +14,7 @@ type Ellipsoid struct {
 	a, b, f float64
 }
 
-var wgs84 = Ellipsoid{a: 6378137, b: 6356752.314245, f: 1/298.257223563}
+var wgs84 = Ellipsoid{a: 6378137, b: 6356752.314245, f: 1 / 298.257223563}
 
 // WGS84 is a standard ellipsoid used in cartography, geodesy, and satellite navigation including GPS
 func WGS84() Ellipsoid {

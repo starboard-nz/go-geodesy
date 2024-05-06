@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/starboard-nz/orb"
 	"github.com/starboard-nz/go-geodesy/utils"
+	"github.com/starboard-nz/orb"
 )
 
 func TestSegmentIntersection(t *testing.T) {
@@ -36,16 +36,16 @@ func TestSegmentIntersection(t *testing.T) {
 	})
 
 	/*
-	t.Run("Colinear", func(t *testing.T) {
-		p1 := orb.Point{0, 0}
-		p2 := orb.Point{20, 20}
-		q1 := orb.Point{20, 20}
-		q2 := orb.Point{40, 40}
+		t.Run("Colinear", func(t *testing.T) {
+			p1 := orb.Point{0, 0}
+			p2 := orb.Point{20, 20}
+			q1 := orb.Point{20, 20}
+			q2 := orb.Point{40, 40}
 
-		is := utils.SegmentIntersection(p1, p2, q1, q2)
-		require.Nil(t, is)
-	})
-*/
+			is := utils.SegmentIntersection(p1, p2, q1, q2)
+			require.Nil(t, is)
+		})
+	*/
 
 	t.Run("No intersection", func(t *testing.T) {
 		p1 := orb.Point{0, 0}
@@ -80,16 +80,16 @@ func TestSegmentsIntersect(t *testing.T) {
 	})
 
 	/*
-	t.Run("Colinear", func(t *testing.T) {
-		p1 := orb.Point{0, 0}
-		p2 := orb.Point{20, 20}
-		q1 := orb.Point{20, 20}
-		q2 := orb.Point{40, 40}
+		t.Run("Colinear", func(t *testing.T) {
+			p1 := orb.Point{0, 0}
+			p2 := orb.Point{20, 20}
+			q1 := orb.Point{20, 20}
+			q2 := orb.Point{40, 40}
 
-		is := utils.SegmentsIntersect(p1, p2, q1, q2)
-		require.False(t, is)
-	})
-*/
+			is := utils.SegmentsIntersect(p1, p2, q1, q2)
+			require.False(t, is)
+		})
+	*/
 
 	t.Run("No intersection", func(t *testing.T) {
 		p1 := orb.Point{0, 0}

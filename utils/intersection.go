@@ -7,8 +7,8 @@ package utils
 // TODO: combine all of the above provide functions that take an EarthModel argument
 
 import (
-	"github.com/starboard-nz/orb"
 	geod "github.com/starboard-nz/go-geodesy"
+	"github.com/starboard-nz/orb"
 )
 
 // LineStringIntersections finds the intersections of 2 LineStrings (if exists).

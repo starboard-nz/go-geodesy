@@ -11,19 +11,19 @@ import (
 	geod "github.com/starboard-nz/go-geodesy"
 	"github.com/starboard-nz/go-geodesy/utils"
 	"github.com/starboard-nz/orb"
-	"github.com/starboard-nz/units"
 	"github.com/starboard-nz/orb/geojson"
+	"github.com/starboard-nz/units"
 )
 
 func saveToGeoJSON(fname string, geoms []orb.Geometry, points []orb.Point) error {
 	colours := []string{"#ff3300", "#00ff33", "#0033ff", "#6633ee", "#ee6633", "#33ee66"}
 	style := func(colour string) geojson.Properties {
-		return geojson.Properties {
+		return geojson.Properties{
 			"style": map[string]interface{}{
-				"color": colour,
-				"opacity": 0.7,
+				"color":     colour,
+				"opacity":   0.7,
 				"dashArray": "",
-				"weight": 3,
+				"weight":    3,
 			},
 		}
 	}
@@ -31,8 +31,8 @@ func saveToGeoJSON(fname string, geoms []orb.Geometry, points []orb.Point) error
 	fc := geojson.NewFeatureCollection()
 	for i := range geoms {
 		fc.Append(&geojson.Feature{
-			Type: "Feature",
-			Geometry: geoms[i],
+			Type:       "Feature",
+			Geometry:   geoms[i],
 			Properties: style(colours[i%len(colours)]),
 		})
 	}
@@ -41,8 +41,8 @@ func saveToGeoJSON(fname string, geoms []orb.Geometry, points []orb.Point) error
 		st := style(colours[len(geoms)%len(colours)])
 		for i := range points {
 			fc.Append(&geojson.Feature{
-				Type: "Feature",
-				Geometry: points[i],
+				Type:       "Feature",
+				Geometry:   points[i],
 				Properties: st,
 			})
 		}
@@ -65,7 +65,7 @@ func saveToGeoJSON(fname string, geoms []orb.Geometry, points []orb.Point) error
 	}
 
 	return nil
-}	
+}
 
 func TestSegmentError(t *testing.T) {
 	p0 := orb.Point{-154.5000, -35}
@@ -209,8 +209,7 @@ func TestDensifyRing(t *testing.T) {
 		assert.Len(t, denseRing, 259)
 		saveToGeoJSON("/tmp/am-crossing4-spherical.json", []orb.Geometry{ring, denseRing}, denseRing)
 	})
-	
-	
+
 	t.Run("-180 to 180 rectangle with no intermediate points", func(t *testing.T) {
 		p0 := orb.Point{180, -10}
 		p1 := orb.Point{-180, -10}

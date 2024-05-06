@@ -29,7 +29,7 @@ func PlanarModel(ll LatLon, modelArgs ...interface{}) Model {
 }
 
 // LatLon converts LatLonPlanar to LatLon
-func (lls LatLonPlanar)LatLon() LatLon {
+func (lls LatLonPlanar) LatLon() LatLon {
 	return lls.ll
 }
 
@@ -37,7 +37,7 @@ func (lls LatLonPlanar)LatLon() LatLon {
 func NewLatLonPlanar(latitude, longitude float64) LatLonPlanar {
 	return LatLonPlanar{
 		ll: LatLon{
-			Latitude: Wrap90(Degrees(latitude)),
+			Latitude:  Wrap90(Degrees(latitude)),
 			Longitude: Wrap180(Degrees(longitude)),
 		},
 	}
@@ -55,7 +55,7 @@ func ParseLatLonPlanar(args ...interface{}) (LatLonPlanar, error) {
 
 // approximate distances of 1 degree longitude at each latitude in metres
 var lngDistances = map[int]float64{
-	90: 20.0, 89: 1941, 88: 3881, 87: 5819,	86: 7756,
+	90: 20.0, 89: 1941, 88: 3881, 87: 5819, 86: 7756,
 	85: 9691, 84: 11623, 83: 13551, 82: 15475, 81: 17395,
 	80: 19309, 79: 21217, 78: 23118, 77: 25013, 76: 26900,
 	75: 28779, 74: 30649, 73: 32510, 72: 34361, 71: 36201,
@@ -78,9 +78,9 @@ var lngDistances = map[int]float64{
 func (lls LatLonPlanar) DistanceTo(dest LatLon) units.Distance {
 	y0 := float64(Wrap90(lls.ll.Latitude))
 	y1 := float64(Wrap90(dest.Latitude))
-	dy := math.Abs(y0 - y1) * 111195 // metres
+	dy := math.Abs(y0-y1) * 111195 // metres
 
-	avgLat := int(math.Round(math.Abs(y0 + y1)/2))
+	avgLat := int(math.Round(math.Abs(y0+y1) / 2))
 	lngDist, ok := lngDistances[avgLat]
 	if !ok {
 		lngDist = 111195
@@ -130,7 +130,7 @@ func (lls LatLonPlanar) InitialBearingTo(ll LatLon) Degrees {
 		return Degrees(180)
 	}
 
-	rad := math.Atan(float64(dy)/float64(dx))
+	rad := math.Atan(float64(dy) / float64(dx))
 	deg := 90 - DegreesFromRadians(rad)
 
 	if dx < 0 {
@@ -169,21 +169,21 @@ func (lls LatLonPlanar) IntermediatePointTo(ll LatLon, fraction float64) LatLon 
 	// Planar or not, longitudes don't make sense at the poles
 	if ll.Latitude == 90 || ll.Latitude == -90 {
 		return LatLon{
-			Latitude: Wrap90(lls.ll.Latitude + dy * Degrees(fraction)),
+			Latitude:  Wrap90(lls.ll.Latitude + dy*Degrees(fraction)),
 			Longitude: lls.ll.Longitude,
 		}
 	}
 
 	if lls.ll.Latitude == 90 || lls.ll.Latitude == -90 {
 		return LatLon{
-			Latitude: Wrap90(lls.ll.Latitude + dy * Degrees(fraction)),
+			Latitude:  Wrap90(lls.ll.Latitude + dy*Degrees(fraction)),
 			Longitude: ll.Longitude,
 		}
 	}
 
 	return LatLon{
-		Latitude: Wrap90(lls.ll.Latitude + dy * Degrees(fraction)),
-		Longitude: Wrap180(lls.ll.Longitude + dx * Degrees(fraction)),
+		Latitude:  Wrap90(lls.ll.Latitude + dy*Degrees(fraction)),
+		Longitude: Wrap180(lls.ll.Longitude + dx*Degrees(fraction)),
 	}
 }
 
@@ -196,4 +196,3 @@ func (lls LatLonPlanar) IntermediatePointsTo(ll LatLon, fractions []float64) []L
 
 	return res
 }
-

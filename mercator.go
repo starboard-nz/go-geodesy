@@ -28,7 +28,7 @@ func (ll LatLon) MercatorPoint() MercatorPoint {
 	// convert from degrees to radians
 	latRad := ll.Latitude.Radians()
 
-	y := 0.5 + math.Log(math.Tan(π/4 + latRad/2))/(2*π)
+	y := 0.5 + math.Log(math.Tan(π/4+latRad/2))/(2*π)
 
 	return MercatorPoint{X: x, Y: y}
 }
@@ -36,9 +36,9 @@ func (ll LatLon) MercatorPoint() MercatorPoint {
 // MercatorPoint convert a point in Mercator projection the a Latitude/Longitude.
 // The Mercator coordinates must be in the [0..1] range, so divide by the horizontal/vertical resolution.
 func (mp MercatorPoint) LatLon() LatLon {
-	latRad := 2*(math.Atan(math.Exp((mp.Y - 0.5) * 2*π))-π/4)
+	latRad := 2 * (math.Atan(math.Exp((mp.Y-0.5)*2*π)) - π/4)
 	lat := DegreesFromRadians(latRad)
-	lon := Degrees(mp.X * 360 - 180)
+	lon := Degrees(mp.X*360 - 180)
 
 	return LatLon{Latitude: lat, Longitude: lon}
 }
