@@ -9,10 +9,10 @@ package geod
  */
 
 import (
-	"math"
 	"fmt"
-	"strings"
+	"math"
 	"strconv"
+	"strings"
 )
 
 /**
@@ -31,7 +31,6 @@ import (
  *
  */
 
-
 // LatLonEllipsoidal represents latitude/longitude points on an ellipsoidal model earth,
 // with ellipsoid parameters and methods for converting points to/from cartesian (ECEF) coordinates.
 //
@@ -39,7 +38,7 @@ import (
 // LatLonEllipsoidalReferenceFrame.
 type LatLonEllipsoidal struct {
 	LatLon
-	Height float64
+	Height    float64
 	ellipsoid Ellipsoid
 }
 
@@ -47,10 +46,10 @@ type LatLonEllipsoidal struct {
 func NewLatLonEllipsodial(latitude, longitude Degrees, height float64) LatLonEllipsoidal {
 	return LatLonEllipsoidal{
 		LatLon: LatLon{
-			Latitude: Wrap90(latitude),
+			Latitude:  Wrap90(latitude),
 			Longitude: Wrap180(longitude),
 		},
-		Height: height,
+		Height:    height,
 		ellipsoid: WGS84(),
 	}
 }
@@ -197,17 +196,16 @@ func ParseLatLonEllipsoidal(args ...interface{}) (LatLonEllipsoidal, error) {
 		}
 		height = float64(v)
 	}
-		
-        return LatLonEllipsoidal{
+
+	return LatLonEllipsoidal{
 		LatLon: LatLon{
-			Latitude: lat,
+			Latitude:  lat,
 			Longitude: lon,
 		},
-		Height: height,
+		Height:    height,
 		ellipsoid: WGS84(),
 	}, nil
 }
-
 
 // Equals checks if the `other` point is equal to this point
 //
@@ -215,19 +213,19 @@ func ParseLatLonEllipsoidal(args ...interface{}) (LatLonEllipsoidal, error) {
 // p1 := geod.LatLonEllipsoidal{52.205, 0.119, geod.WGS84()}
 // p2 := geod.LatLonEllipsoidal{52.205, 0.119, geod.WGS84()}
 // equal := p1.Equals(p2) // true
-func (l LatLonEllipsoidal)Equals(other LatLonEllipsoidal) bool {
-	epsilon := math.Nextafter(1.0, 2.0)-1.0
-        if math.Abs(float64(l.Latitude) - float64(other.Latitude)) > epsilon {
+func (l LatLonEllipsoidal) Equals(other LatLonEllipsoidal) bool {
+	epsilon := math.Nextafter(1.0, 2.0) - 1.0
+	if math.Abs(float64(l.Latitude)-float64(other.Latitude)) > epsilon {
 		return false
 	}
-        if math.Abs(float64(l.Longitude) - float64(other.Longitude)) > epsilon {
+	if math.Abs(float64(l.Longitude)-float64(other.Longitude)) > epsilon {
 		return false
 	}
-	if math.Abs(l.Height - other.Height) > epsilon {
+	if math.Abs(l.Height-other.Height) > epsilon {
 		return false
 	}
 	if l.ellipsoid != other.ellipsoid {
 		return false
 	}
-        return true
+	return true
 }

@@ -7,30 +7,30 @@ package geod
  */
 
 import (
-	"testing"
 	"math"
+	"testing"
 )
 
 func TestSpherical(t *testing.T) {
 	p1 := NewLatLonSpherical(52.205, 0.119)
 	p2 := NewLatLon(48.857, 2.351)
-	if math.Round(p1.DistanceTo(p2).Metres()) != 404279 {
+	if math.Round(float64(p1.DistanceTo(p2).Metre())) != 404279 {
 		t.Errorf("Incorrect result")
 	}
-	
+
 	SetEarthRadius(3959.0)
-	if math.Round(10 * p1.DistanceTo(p2).Metres()) != 2512 {
+	if math.Round(10*float64(p1.DistanceTo(p2).Metre())) != 2512 {
 		t.Errorf("Incorrect result")
 	}
 	SetEarthRadius(6371000.0)
 
 	brng := p1.InitialBearingTo(p2)
-	if math.Round(10 * float64(brng)) != 1562 {
+	if math.Round(10*float64(brng)) != 1562 {
 		t.Errorf("Incorrect result")
 	}
 
 	brng = p1.FinalBearingOn(p2)
-	if math.Round(10 * float64(brng)) != 1579 {
+	if math.Round(10*float64(brng)) != 1579 {
 		t.Errorf("Incorrect result")
 	}
 
@@ -57,4 +57,3 @@ func TestSpherical(t *testing.T) {
 		t.Errorf("Incorrect result")
 	}
 }
-

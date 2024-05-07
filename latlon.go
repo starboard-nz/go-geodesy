@@ -9,8 +9,8 @@ package geod
  */
 
 import (
-	"math"
 	"fmt"
+	"math"
 	"strings"
 )
 
@@ -20,19 +20,19 @@ type Degrees float64
 
 // Valid returns true if the angle is valid. Invalid angles are returned by
 // functions when the result cannot be calculated.
-func (d Degrees)Valid() bool {
+func (d Degrees) Valid() bool {
 	return !math.IsNaN(float64(d))
 }
 
 // Radians takes an argument in degrees and returns it in radians
-func (d Degrees)Radians() float64 {
+func (d Degrees) Radians() float64 {
 	return float64(d) * math.Pi / 180.0
 }
 
 // RoundTo returns the degrees as a float rounded to `n` decimal points.
-func (d Degrees)RoundTo(n int) float64 {
+func (d Degrees) RoundTo(n int) float64 {
 	p10 := math.Pow10(n)
-	return math.Round(p10 * float64(d)) / p10
+	return math.Round(p10*float64(d)) / p10
 }
 
 // DegreesFromRadians takes an argument in radians and returns it in degrees
@@ -40,10 +40,9 @@ func DegreesFromRadians(radians float64) Degrees {
 	return Degrees(radians * 180.0 / math.Pi)
 }
 
-
 // LatLon represents a point on Earth defined by its Latitude and Longitude
 type LatLon struct {
-	Latitude Degrees
+	Latitude  Degrees
 	Longitude Degrees
 }
 
@@ -54,7 +53,7 @@ func NewLatLon(latitude, longitude float64) LatLon {
 
 // Valid returns true if the coordinates are valid. Invalid coordinates are returned by
 // functions when the result cannot be calculated.
-func (ll LatLon)Valid() bool {
+func (ll LatLon) Valid() bool {
 	if math.IsNaN(float64(ll.Latitude)) || math.IsNaN(float64(ll.Longitude)) {
 		return false
 	}
@@ -63,18 +62,18 @@ func (ll LatLon)Valid() bool {
 }
 
 // Equals returns true if `ll` and `other` have identical Latitude and Longitude values
-func (ll LatLon)Equals(other LatLon) bool {
+func (ll LatLon) Equals(other LatLon) bool {
 	epsilon := math.Nextafter(1, 2) - 1
-	
-        if math.Abs(float64(ll.Latitude) - float64(other.Latitude)) > epsilon {
+
+	if math.Abs(float64(ll.Latitude)-float64(other.Latitude)) > epsilon {
 		return false
 	}
 
-        if math.Abs(float64(ll.Longitude) - float64(other.Longitude)) > epsilon {
+	if math.Abs(float64(ll.Longitude)-float64(other.Longitude)) > epsilon {
 		return false
 	}
 
-        return true
+	return true
 }
 
 // ParseLatLon parses a latitude/longitude point from a variety of formats.
@@ -177,5 +176,5 @@ func ParseLatLon(args ...interface{}) (LatLon, error) {
 
 	lon = Wrap180(lon)
 
-        return LatLon{Latitude: lat, Longitude: lon}, nil
+	return LatLon{Latitude: lat, Longitude: lon}, nil
 }
