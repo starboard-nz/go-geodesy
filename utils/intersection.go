@@ -1,9 +1,11 @@
 package utils
 
-// This file implements planar intersections (i.e. Flat Earth™)
+// This is half finished. It implements rhumb line intersections by converting the positions to Mercator
+// and then using a planar intersection algorithm, then converting it back to lat/lon.
 //
 // For spherical intersections, use LatLonSpherical.Intersection.
-// For rhumb line intersections, convert to Mercator projection using LatLon.Mercator*() and then use these planar functions.
+//
+// FIXME: Doesn't work for antimeridian crossing segments.
 // TODO: combine all of the above provide functions that take an EarthModel argument
 
 import (
@@ -50,10 +52,10 @@ func LineStringsIntersect(l1, l2 orb.LineString) bool {
 
 // SegmentIntersection returns the intersections of 2 segments (p1, p2) and (q1, q2) (if exists).
 func SegmentIntersection(p1, p2, q1, q2 orb.Point) *orb.Point {
-	var p *orb.Point
+	var p orb.Point
 	_ = segmentIntersection(p1, p2, q1, q2, &p)
 
-	return p
+	return &p
 }
 
 // SegmentsIntersect returns true if segments (p1, p2) and (q1, q2) intersect.
@@ -61,7 +63,7 @@ func SegmentsIntersect(p1, p2, q1, q2 orb.Point) bool {
 	return segmentIntersection(p1, p2, q1, q2, nil)
 }
 
-func segmentIntersection(p1, p2, q1, q2 orb.Point, is **orb.Point) bool {
+func segmentIntersection(p1, p2, q1, q2 orb.Point, is *orb.Point) bool {
 	var pMin, pMax, qMin, qMax float64
 
 	if p1[0] < p2[0] {
@@ -116,7 +118,7 @@ func segmentIntersection(p1, p2, q1, q2 orb.Point, is **orb.Point) bool {
 
 	if is != nil {
 		ll := geod.MercatorPoint{X: mp1.X + (t * s1x), Y: mp1.Y + (t * s1y)}.LatLon()
-		*is = &orb.Point{float64(ll.Longitude), float64(ll.Latitude)}
+		*is = orb.Point{float64(ll.Longitude), float64(ll.Latitude)}
 	}
 
 	return true

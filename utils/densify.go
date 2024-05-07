@@ -136,6 +136,17 @@ func DensifySegment(p0, p1 orb.Point, model, refModel geod.EarthModel, tolerance
 	return densifySegment(ll0, ll1, p0, p1, 0, 1, model, refModel, tolerance, 15)
 }
 
+// To avoid reducing the accuracy of the intermediate points through repeated interval halving, this function passes
+// through the start and end points of the segment (ll0 and ll1) unchanged, and we calculate the fraction where the point
+// should be added. The starting and ending points of the part of the section we are densifying (pf and pt) are passed in
+// the recursive step, along with the fractions where those points were added (from, to).
+//
+// For example, when densifying the 2nd quarter of the segment:
+//
+//  X----------------------|---------------------X
+//  X          |<=========>|                     X
+// ll0         pf          pt                   ll1
+//           from=0.25   to=0.5
 func densifySegment(ll0, ll1 geod.LatLon, pf, pt orb.Point, from, to float64, model, refModel geod.EarthModel, tolerance units.Distance, recDepth int) ([]orb.Point, error) {
 	recDepth -= 1
 	mid := (from + to) / 2
